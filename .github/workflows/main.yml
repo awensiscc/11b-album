@@ -17,8 +17,9 @@ jobs:
       uses: actions/checkout@v4  # Загружаем ваш репозиторий
 
     - name: Optimize images
-      uses: calibreapp/image-actions@v1  # Используем готовый Action для сжатия
+       uses: calibreapp/image-actions@main  # Используем ветку main для calibreapp/image-actions
       with:
-        quality: 80  # Уровень сжатия (от 0 до 100, чем ниже, тем сильнее сжатие)
+        githubToken: ${{ secrets.GITHUB_TOKEN }}  # Токен для аутентификации
+        quality: 80  # Уровень сжатия (от 0 до 100)
         strip_metadata: true  # Удаляем метаданные из изображений
         commit_message: 'Optimize images'  # Сообщение для коммита
