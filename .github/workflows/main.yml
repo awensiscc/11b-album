@@ -14,10 +14,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v1.1.2  # Загружаем ваш репозиторий
+      uses: actions/checkout@v4  # Загружаем ваш репозиторий
 
     - name: Optimize images
-      uses: calibreapp/image-actions@v3  # Используем готовый Action для сжатия
+      uses: calibreapp/image-actions@v1  # Используем готовый Action для сжатия
       with:
         quality: 80  # Уровень сжатия (от 0 до 100, чем ниже, тем сильнее сжатие)
         strip_metadata: true  # Удаляем метаданные из изображений
