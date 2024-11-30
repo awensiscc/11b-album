@@ -3,8 +3,8 @@ name: Optimize Images
 on:
   push:
     branches:
-      - main  # Запускать на каждый коммит в ветку main
-  pull_request: # Также запускать при создании pull request
+      - main
+  pull_request:
     branches:
       - main
 
@@ -13,13 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4  # Загружаем ваш репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Optimize images
-      uses: calibreapp/image-actions@main  # Используем ветку main для calibreapp/image-actions
-      with:
-        githubToken: ${{ secrets.GITHUB_TOKEN }}  # Токен для аутентификации
-        quality: 80  # Уровень сжатия (от 0 до 100)
-        strip_metadata: true  # Удаляем метаданные из изображений
-        commit_message: 'Optimize images'  # Сообщение для коммита
+      - name: Optimize images
+        uses: calibreapp/image-actions@main
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          jpegQuality: 80
+          pngQuality: 80
+          webpQuality: 80
+          compressOnly: false
