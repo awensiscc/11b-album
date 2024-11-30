@@ -1,0 +1,24 @@
+name: Optimize Images
+
+on:
+  push:
+    branches:
+      - main  # Запускать на каждый коммит в ветку main
+  pull_request: # Также запускать при создании pull request
+    branches:
+      - main
+
+jobs:
+  optimize-images:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3  # Загружаем ваш репозиторий
+
+    - name: Optimize images
+      uses: calibreapp/image-actions@v3  # Используем готовый Action для сжатия
+      with:
+        quality: 80  # Уровень сжатия (от 0 до 100, чем ниже, тем сильнее сжатие)
+        strip_metadata: true  # Удаляем метаданные из изображений
+        commit_message: 'Optimize images'  # Сообщение для коммита
