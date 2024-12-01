@@ -27,9 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Массив с путями к групповым фотографиям
     const groupPhotos = [
         'photo1.jpg',
-        'photo2.jpg',
-        'photo3spring.jpg',
-        'photo4.jpg',
+        'photo2.JPG',
+        'photo3spring.JPG',
         // Добавьте остальные фотографии
     ];
 
@@ -122,17 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Массив учеников
     const students = [
         {
-            photo: 'student1.jpg',
-            name: 'Марія Бандурова',
+            photo: 'images/student1.jpg',
+            name: 'GANDON GANDONOVICH',
             phrase: '"Никогда не сдавайся!"'
         },
         {
-            photo: 'student2.jpg',
+            photo: 'images/student2.jpg',
             name: 'Петр Петров',
             phrase: '"Всегда вперед!"'
         },
         {
-            photo: 'student3.jpg',
+            photo: 'images/student3.jpg',
             name: 'Мария Сидорова',
             phrase: '"Мечтай и достигай!"'
         },
