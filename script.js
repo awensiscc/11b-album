@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Массив учеников
     const students = [
         {
-            photo: '/student1.JPG',
+            photo: '/images/student1.JPG',
             name: 'GANDON GANDONOVICH',
             phrase: '"Никогда не сдавайся!"'
         },
