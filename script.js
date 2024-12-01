@@ -126,12 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
             phrase: '"Никогда не сдавайся!"'
         },
         {
-            photo: '/student2.jpg',
+            photo: '/images/student2.jpg',
             name: 'Петр Петров',
             phrase: '"Всегда вперед!"'
         },
         {
-            photo: '/student3.JPG',
+            photo: '/images/student3.JPG',
             name: 'Мария Сидорова',
             phrase: '"Мечтай и достигай!"'
         },
