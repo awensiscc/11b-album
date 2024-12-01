@@ -110,7 +110,7 @@ body.orientation-locked {
 /* Стили для панели управления */
 .slideshow-controls {
     position: absolute;
-    bottom: 135px;
+    bottom: 115px;
     width: 100%;
     text-align: center;
     z-index: 1;
