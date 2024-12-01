@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             // Обновляем центральную карточку
             const frontImg = centralCard.querySelector('.front .photo img');
-            frontImg.src = `images/${students[currentIndex].photo}`;
+            frontImg.src = `${students[currentIndex].photo}`;
             const nameDiv = centralCard.querySelector('.overlay .name');
             nameDiv.textContent = students[currentIndex].name;
             const phraseDiv = centralCard.querySelector('.back .phrase');
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentIndex > 0) {
                 leftCard.style.display = 'block';
                 const leftImg = leftCard.querySelector('img');
-                leftImg.src = `images/${students[currentIndex - 1].photo}`;
+                leftImg.src = `${students[currentIndex - 1].photo}`;
             } else {
                 leftCard.style.display = 'none';
             }
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentIndex < students.length - 1) {
                 rightCard.style.display = 'block';
                 const rightImg = rightCard.querySelector('img');
-                rightImg.src = `images/${students[currentIndex + 1].photo}`;
+                rightImg.src = `${students[currentIndex + 1].photo}`;
             } else {
                 rightCard.style.display = 'none';
             }
