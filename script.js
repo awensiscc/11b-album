@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'photo1.jpg',
         'photo2.jpg',
         'photo3spring.jpg',
+        'photo4.jpg',
         // Добавьте остальные фотографии
     ];
 
@@ -51,11 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const currentPhoto = groupPhotos[slideIndex];
-        slideshowImage.src = `group_photos/${currentPhoto}`;
+
+        slideshowImage.src = `/group_photos/${currentPhoto}`;
 
         // Устанавливаем фон размытого изображения
         const slideshowContainer = document.querySelector('.slideshow-container');
-        slideshowContainer.style.backgroundImage = `url('group_photos/${currentPhoto}')`;
+        slideshowContainer.style.backgroundImage = `url('/group_photos/${currentPhoto}')`;
     }
 
     function startSlideshow() {
