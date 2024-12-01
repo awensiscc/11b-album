@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Массив с путями к групповым фотографиям
     const groupPhotos = [
         'photo1.jpg',
-        'photo2.JPG',
-        'photo3spring.JPG',
+        'photo2.jpg',
+        'photo3spring.jpg',
         // Добавьте остальные фотографии
     ];
 
