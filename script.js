@@ -121,17 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Массив учеников
     const students = [
         {
-            photo: '/images/student1.JPG',
+            photo: '/student1.JPG',
             name: 'GANDON GANDONOVICH',
             phrase: '"Никогда не сдавайся!"'
         },
         {
-            photo: '/images/student2.jpg',
+            photo: '/student2.jpg',
             name: 'Петр Петров',
             phrase: '"Всегда вперед!"'
         },
         {
-            photo: '/images/student3.JPG',
+            photo: '/student3.JPG',
             name: 'Мария Сидорова',
             phrase: '"Мечтай и достигай!"'
         },
