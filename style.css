@@ -61,10 +61,13 @@ body.orientation-locked {
 /* Стили для слайд-шоу */
 .slideshow-container {
     position: relative;
+    overflow: hidden;
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
 }
+
+
 
 .slideshow {
     position: relative;
@@ -398,3 +401,4 @@ body.orientation-locked {
         font-size: 1em;
     }
 }
+
