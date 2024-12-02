@@ -52,7 +52,7 @@ body.orientation-locked {
     background-size: 10000px;
     height: 100%;
     background-repeat: no-repeat;
-    background-image: url('teacher.jpg');
+    background-image: url('/teacher.jpg');
 }
 
 .teacher-background {
