@@ -44,6 +44,200 @@ body.orientation-locked {
 }
 
 /* Секции */
+/* Стили для первой секции классной руководительницы */
+#teacher-section {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background-size: 10000px;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-image: url('teacher.jpg'); /* Путь к фоновому изображению */
+
+
+}
+
+.teacher-background {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background-size: 1000000px;
+    height: 100%;
+    background-repeat: no-repeat;
+}
+
+.teacher-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный чёрный слой */
+    z-index: 1;
+}
+/*.slideshow-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background-size: 10000px;
+    height: 100%;
+    background-repeat: no-repeat;
+}
+
+
+
+.slideshow {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slideshow img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 100%;
+    max-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+    border-radius: 20px;
+    box-shadow: 0 0 30px 30px rgba(0, 0, 0, 0.5);*/
+}
+.teacher-container {
+    position: relative;
+    display: flex;
+    height: 100%;
+    max-width: 1200px;
+    width: 100%;
+    gap: 40px;
+    z-index: 2; /* Располагается над затемнённым слоем */
+}
+
+.teacher-photo img {
+    position: absolute;
+    top: 50%;
+    left: 20%;
+    max-width: 100%;
+    max-height: 100%;
+    transform: translate(-55%, -50%);
+    object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+    border-radius: 20px;
+    box-shadow: 0 0 30px 30px rgba(0, 0, 0, 0.5);*/
+}
+.teacher-name {
+    position: absolute; /* Абсолютное позиционирование относительно родителя (.teacher-words) */
+    bottom: 20px; /* Отступ от нижнего края */
+    right: 20px; /* Отступ от правого края */
+    font-family: 'Lora', serif;
+    font-size: 1em; /* Размер шрифта */
+     /* Золотистый цвет для выделения имени */
+    color: #e2dfdf; /* Цвет текста */
+    font-weight: 600; /* Жирность текста (опционально) */
+    text-transform: uppercase; /* Преобразование текста в верхний регистр (опционально) */
+}
+.teacher-words {
+    max-width: 100%;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    transform: translate(+30%, -0%);
+    color: white; /* Белый цвет текста для контраста */
+    padding: 20px; /* Внутренние отступы для текста */
+    border-radius: 5px; /* Скругление углов (опционально) */
+    z-index: 1;
+}
+.teacher-words {
+    position: relative;
+    max-width: 600px;
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+    padding: 0;
+}
+
+.teacher-words p {
+    position: relative;
+    font-size: 1.2rem;
+    line-height: 2; /* Увеличенный межстрочный интервал */
+    margin-bottom: 20px;
+    z-index: 1; /* Текст всегда выше мазка */
+}
+
+.highlight {
+    position: relative;
+    display: inline-block; /* Ограничиваем ширину мазка только текстом */
+    z-index: 1; /* Текст выше мазка */
+    color: #fff; /* Цвет текста */
+}
+
+.highlight::before {
+    content: '';
+    position: absolute;
+    top: 50%; /* Центрируем мазок относительно текста */
+    left: 0;
+    width: 100%; /* Ширина мазка ограничена текстом */
+    height: 1.4em; /* Высота мазка */
+    background: linear-gradient(90deg, #ffd65e, #ffc107, #ffca28);
+    mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0) 100%);
+    background-blend-mode: lighten;
+    z-index: -1; /* Мазок позади текста */
+    transform: translateY(-50%) rotate(-1deg); /* Лёгкий наклон мазка */
+    border-radius: 5px; /* Скругляем края мазка */
+    opacity: 0.65; /* Прозрачность мазка */
+    filter: blur(0.5px); /* Лёгкое размытие */
+}
+
+
+.teacher-words h2 {
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.teacher-words p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media screen and (max-width: 400px) {
+    .teacher-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .teacher-photo img {
+        width: 80%; /* Уменьшенный размер на мобильных устройствах */
+
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .teacher-words {
+        max-width: 90%; /* Ширина блока с текстом на мобильных устройствах */
+        background-color: rgba(0, 0, 0, 0.6); /* Немного больше затемнение */
+        padding: 15px;
+    }
+
+    .teacher-words h2 {
+        font-size: 1.5em;
+    }
+
+    .teacher-words p {
+        font-size: 1em;
+    }
+}
+
+
+
 .section {
     scroll-snap-align: start;
     width: 100%;
@@ -118,6 +312,7 @@ body.orientation-locked {
 
 .slideshow-controls button {
     background-color: transparent;
+    opacity: 50%;
     border: none;
     padding: 10px;
     margin: 0 15px;
@@ -327,18 +522,32 @@ body.orientation-locked {
 /* Надпись "Made by" */
 .made-by {
     position: absolute;
-    bottom: 10px;
-    right: 20px;
-    font-size: 1em;
+    bottom: 10px; /* Расположение внизу */
+    right: 20px; /* Расположение справа */
+    font-size: 1em; /* Стандартный размер текста */
     color: #fff;
-    opacity: 0.7;
+    opacity: 0.7; /* Прозрачность */
+    text-align: center; /* Выравнивание текста */
+}
+
+/* Уменьшаем блок и текст на мобильных устройствах */
+@media screen and (max-width: 900px) {
+    .made-by {
+        font-size: 0.8em; /* Уменьшаем размер текста */
+        bottom: 5px; /* Сдвигаем блок ближе к краю */
+        right: 10px; /* Уменьшаем отступ справа */
+    }
+
+    .made-by a {
+        font-size: 0.8em; /* Уменьшаем размер ссылок */
+    }
 }
 
 
 /* Кнопка возврата к слайд-шоу */
 .back-to-slideshow {
     position: fixed;
-    bottom: 20px;
+    bottom: 40px;
     right: 20px;
     z-index: 1000;
     display: none;
@@ -374,12 +583,12 @@ body.orientation-locked {
 }
 
 /* Адаптивность для горизонтальной ориентации мобильных устройств */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
     .card {
-        width: 250px;
-        height: 350px;
-        top: 40%;
-        transform: translate(-50%, -40%);
+        width: 30%;
+        height: 90%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
 
     .overlay {
