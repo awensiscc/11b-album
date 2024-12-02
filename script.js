@@ -28,14 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupPhotos = [
         'photo1.jpg',
         'photo2.jpg',
-        'photo3.jpg',
-        'photo5.jpg',
-        'photo6.jpg',
-        'photo7.jpg',
-        'photo8.jpg',
-        'photo9.jpg',
-        'photo10.jpg',
-        'photo11.jpg',
+        'photo3spring.jpg',
         // Добавьте остальные фотографии
     ];
 
@@ -70,10 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
         slideshowInterval = setInterval(() => {
             showSlide(slideIndex + 1);
         }, 5000);
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
     }
 
     function stopSlideshow() {
         clearInterval(slideshowInterval);
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     }
 
     prevBtn.addEventListener('click', () => {
@@ -85,15 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playPauseBtn.addEventListener('click', () => {
-        const icon = playPauseBtn.querySelector('i');
         if (isPlaying) {
             stopSlideshow();
-            icon.classList.remove('fa-pause');
-            icon.classList.add('fa-play');
         } else {
             startSlideshow();
-            icon.classList.remove('fa-play');
-            icon.classList.add('fa-pause');
         }
         isPlaying = !isPlaying;
     });
@@ -129,20 +119,145 @@ document.addEventListener('DOMContentLoaded', () => {
     const students = [
         {
             photo: '/images/student1.jpg',
-            name: 'GANDON GANDONOVICH',
-            phrase: '"Никогда не сдавайся!"'
+            name: 'Микита Дорошенко',
+            phrase: '" qer 3301 qeweff the fddsteg biggest ffddsrwr puzzle fdsgfggfg in fds12gew da dfs6weg wrld eww1ew? who is next?🌊"'
         },
         {
             photo: '/images/student2.jpg',
-            name: 'Петр Петров',
+            name: 'Микита Тельчаров',
             phrase: '"Всегда вперед!"'
         },
         {
             photo: '/images/student3.jpg',
-            name: 'Мария Сидорова',
+            name: 'Надія Шукалюк',
             phrase: '"Мечтай и достигай!"'
         },
-        // Добавьте остальных учеников (всего должно быть 29)
+        {
+            photo: '/images/student4.jpg',
+            name: 'Владислава Пучинська',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student5.jpg',
+            name: 'Андрій Іванов',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student6.jpg',
+            name: 'Дарія Фесенко',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student7.jpg',
+            name: 'Ігор Косаківський',
+            phrase: '"Мечтай и достигай!"'
+        },
+         {
+            photo: '/images/student8.jpg',
+            name: 'Богдан Діденко',
+            phrase: '"Мечтай и достигай!"'
+        },
+         {
+            photo: '/images/student9.jpg',
+            name: 'Денис Сторожук',
+            phrase: '"Мечтай и достигай!"'
+        },
+         {
+            photo: '/images/student10.jpg',
+            name: 'Оксана Браткевич',
+            phrase: '"Мечтай и достигай!"'
+        },
+         {
+            photo: '/images/student11.jpg',
+            name: 'Катерина Кравченко',
+            phrase: '"Мечтай и достигай!"'
+        },
+         {
+            photo: '/images/student12.jpg',
+            name: 'Евеліна Станкова',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student13.jpg',
+            name: 'Макисим Кюркчіу',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student14.jpg',
+            name: 'Владислав Шкуріна',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student15.jpg',
+            name: 'Марія Мироненко',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student16.jpg',
+            name: 'Вероніка Лутенко',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student17.jpg',
+            name: 'Анастасія Гафенко',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student18.jpg',
+            name: 'Анастасія Мороз',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student19.jpg',
+            name: 'Марія Бандурова',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student20.jpg',
+            name: 'Марго Бондар',
+            phrase: '"Мечтай и достигай!"'
+        },
+         {
+            photo: '/images/student21.jpg',
+            name: 'Владислава Крамаренко',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student22.jpg',
+            name: 'Валерія Бец',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student23.jpg',
+            name: 'Софія Соломонова',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student24.jpeg',
+            name: 'Вікторія Василенко',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student25.jpg',
+            name: 'Артем Богданов',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student26.jpg',
+            name: 'Надія Цуркан',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student27.jpg',
+            name: 'Костянтин Краснян',
+            phrase: '"Мечтай и достигай!"'
+        },
+        {
+            photo: '/images/student28.jpg',
+            name: 'Кіра Лафазан',
+            phrase: '"Мечтай и достигай!"'
+        },
+
     ];
 
     let currentIndex = 0;
@@ -236,25 +351,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Обработчик для кнопки возврата к слайд-шоу
     const backToSlideshowBtn = document.getElementById('back-to-slideshow-btn');
     const scrollContainer = document.querySelector('.scroll-container');
-    const secondBlock = document.querySelectorAll('.section')[1];
+    const slideshowSection = document.querySelectorAll('.section')[1]; // Вторая секция теперь слайд-шоу
+    const portraitSection = document.querySelectorAll('.section')[2]; // Третья секция - портреты
+
+    let portraitSectionTop = portraitSection.offsetTop;
+    let portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
+
+    // Обновляем позиции после полной загрузки страницы
+    window.addEventListener('load', () => {
+        portraitSectionTop = portraitSection.offsetTop;
+        portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
+    });
 
     // Обработчик прокрутки
     scrollContainer.addEventListener('scroll', () => {
         const scrollPosition = scrollContainer.scrollTop;
-        const secondBlockTop = secondBlock.offsetTop;
 
-        // Показываем кнопку, если прокрутка достигла второго блока
-        if (scrollPosition >= secondBlockTop) {
+        // Для отладки: выводим значения в консоль
+        console.log(`scrollPosition: ${scrollPosition}, portraitSectionTop: ${portraitSectionTop}, portraitSectionBottom: ${portraitSectionBottom}`);
+
+        // Показываем кнопку, если пользователь находится в третьей секции (портреты)
+        if (scrollPosition >= portraitSectionTop - 10 && scrollPosition <= portraitSectionBottom + 10) { // Добавляем небольшой отступ
             backToSlideshowBtn.style.display = 'flex';
         } else {
             backToSlideshowBtn.style.display = 'none';
         }
     });
 
-    // Перемещение к первому блоку при клике на кнопку
+    // Перемещение к слайд-шоу секции при клике на кнопку
     backToSlideshowBtn.addEventListener('click', () => {
         scrollContainer.scrollTo({
-            top: 0,
+            top: slideshowSection.offsetTop,
             behavior: 'smooth'
         });
     });
