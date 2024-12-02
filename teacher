@@ -38,7 +38,7 @@
             <div class="teacher-container">
                 <!-- Фотография классной руководительницы -->
                 <div class="teacher-photo">
-                    <img src="teacher.JPG" alt="Фото класної керівниці">
+                    <img src="teacher.jpg" alt="Фото класної керівниці">
                 </div>
                 <!-- Теплі слова від керівниці -->
                 <div class="teacher-words">
