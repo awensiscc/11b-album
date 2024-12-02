@@ -28,7 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupPhotos = [
         'photo1.webp',
         'photo2.webp',
-        'photo3spring.webp',
+        'photo3.webp',
+        'photo5.webp',
+        'photo6.webp',
+        'photo7.webp',
+        'photo8.webp',
+        'photo9.webp',
+        'photo10.webp',
+        'photo11.webp',
         // убрал коммент
     ];
 
