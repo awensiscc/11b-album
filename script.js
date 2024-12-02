@@ -1,43 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Функция для проверки ориентации устройства
+    // func to chk device orient
     function checkOrientation() {
         const rotateMessage = document.getElementById('rotate-message');
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
 
         if (isPortrait) {
-            // Если вертикальная ориентация, показываем сообщение и блокируем прокрутку
+            // if vert, show msg & block scroll
             rotateMessage.style.display = 'flex';
             document.body.classList.add('orientation-locked');
         } else {
-            // Если горизонтальная ориентация, скрываем сообщение и разблокируем прокрутку
+            // if hor, hide msg & unblock scroll
             rotateMessage.style.display = 'none';
             document.body.classList.remove('orientation-locked');
         }
     }
 
-    // Проверяем ориентацию при загрузке страницы
+    // chk orient on load
     checkOrientation();
 
-    // Добавляем обработчик события изменения ориентации
+    // listen for orient change
     window.addEventListener('orientationchange', checkOrientation);
 
-    // Также добавим обработчик на изменение размеров окна (для браузеров)
+    // listen for resize
     window.addEventListener('resize', checkOrientation);
 
-    // Массив с путями к групповым фотографиям
+    // photo paths
     const groupPhotos = [
-        'photo1.jpg',
-        'photo2.jpg',
-        'photo3.jpg',
-        'photo4.jpg',
-        'photo5.jpg',
-        'photo6.jpg',
-        'photo7.jpg',
-        'photo8.jpg',
-        'photo9.jpg',
-        'photo10.jpg',
-        'photo11.jpg',
-        // Добавьте остальные фотографии
+        'photo1.webp',
+        'photo2.webp',
+        'photo3spring.webp',
+        // убрал коммент
     ];
 
     let slideIndex = 0;
@@ -62,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         slideshowImage.src = `/group_photos/${currentPhoto}`;
 
-        // Устанавливаем фон размытого изображения
+        // set bg with blur img
         const slideshowContainer = document.querySelector('.slideshow-container');
         slideshowContainer.style.backgroundImage = `url('/group_photos/${currentPhoto}')`;
     }
@@ -96,34 +88,34 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = !isPlaying;
     });
 
-    // Запуск слайд-шоу при загрузке страницы
+    // start slideshow on load
     showSlide(slideIndex);
     startSlideshow();
 
-    // Модальное окно для увеличения изображений
+    // modal for img zoom
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-image');
     const closeBtn = document.querySelector('.modal .close');
 
-    // Открываем модальное окно при клике на изображение
+    // open modal on img click
     slideshowImage.addEventListener('click', () => {
         modal.style.display = 'block';
         modalImg.src = slideshowImage.src;
     });
 
-    // Закрываем модальное окно при клике на кнопку закрытия
+    // close modal on close btn
     closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
-    // Закрываем модальное окно при клике вне изображения
+    // close modal if click outside img
     modal.addEventListener('click', (e) => {
         if (e.target == modal) {
             modal.style.display = 'none';
         }
     });
 
-    // Массив учеников
+    // students array
     const students = [
         {
             photo: '/images/student1.jpg',
@@ -141,27 +133,27 @@ document.addEventListener('DOMContentLoaded', () => {
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student4.jpg',
+            photo: '/images/student4.webp',
             name: 'Владислава Пучинська',
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student5.jpg',
+            photo: '/images/student5.webp',
             name: 'Андрій Іванов',
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student6.jpg',
+            photo: '/images/student6.webp',
             name: 'Дарія Фесенко',
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student7.jpg',
+            photo: '/images/student7.webp',
             name: 'Ігор Косаківський',
             phrase: '"Мечтай и достигай!"'
         },
          {
-            photo: '/images/student8.jpg',
+            photo: '/images/student8.webp',
             name: 'Богдан Діденко',
             phrase: '"Мечтай и достигай!"'
         },
@@ -196,12 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student15.jpg',
+            photo: '/images/student15.webp',
             name: 'Марія Мироненко',
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student16.jpg',
+            photo: '/images/student16.webp',
             name: 'Вероніка Лутенко',
             phrase: '"Мечтай и достигай!"'
         },
@@ -221,12 +213,12 @@ document.addEventListener('DOMContentLoaded', () => {
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student20.jpg',
+            photo: '/images/student20.webp',
             name: 'Марго Бондар',
             phrase: '"Мечтай и достигай!"'
         },
          {
-            photo: '/images/student21.jpg',
+            photo: '/images/student21.webp',
             name: 'Владислава Крамаренко',
             phrase: '"Мечтай и достигай!"'
         },
@@ -246,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             phrase: '"Мечтай и достигай!"'
         },
         {
-            photo: '/images/student25.jpg',
+            photo: '/images/student25.webp',
             name: 'Артем Богданов',
             phrase: '"Мечтай и достигай!"'
         },
@@ -278,22 +270,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const leftCard = document.querySelector('.left-card');
     const rightCard = document.querySelector('.right-card');
 
-    // Функция для обновления отображения
+    // update display func
     function updateDisplay(direction) {
         if (!centralCard || !leftCard || !rightCard) {
             return;
         }
 
-        // Добавляем класс анимации к текущей карточке
+        // add anim class
         if (direction === 'left') {
             centralCard.classList.add('blur-out-right');
         } else if (direction === 'right') {
             centralCard.classList.add('blur-out-left');
         }
 
-        // Ждём завершения анимации перед обновлением контента
+        // wait for anim then update
         setTimeout(() => {
-            // Обновляем центральную карточку
+            // update central card
             const frontImg = centralCard.querySelector('.front .photo img');
             frontImg.src = `${students[currentIndex].photo}`;
             const nameDiv = centralCard.querySelector('.overlay .name');
@@ -301,12 +293,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const phraseDiv = centralCard.querySelector('.back .phrase');
             phraseDiv.textContent = students[currentIndex].phrase;
 
-            // Сбрасываем переворот
+            // reset flip
             if (centralCard.classList.contains('flip')) {
                 centralCard.classList.remove('flip');
             }
 
-            // Удаляем старые классы анимации и добавляем новый класс для плавного появления
+            // remove old anim classes & add new ones
             centralCard.classList.remove('blur-out-left', 'blur-out-right');
             if (direction === 'left') {
                 centralCard.classList.add('blur-in-left');
@@ -314,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 centralCard.classList.add('blur-in-right');
             }
 
-            // Обновляем боковые карточки
+            // update side cards
             if (currentIndex > 0) {
                 leftCard.style.display = 'block';
                 const leftImg = leftCard.querySelector('img');
@@ -331,14 +323,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 rightCard.style.display = 'none';
             }
 
-            // Удаляем класс анимации входа после завершения
+            // remove anim in classes after
             setTimeout(() => {
                 centralCard.classList.remove('blur-in-left', 'blur-in-right');
             }, 500);
         }, 500);
     }
 
-    // Обработчики событий для боковых карточек
+    // click handlers for side cards
     leftCard.addEventListener('click', () => {
         if (currentIndex > 0) {
             currentIndex--;
@@ -353,44 +345,107 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Инициализация отображения
+    // init display
     updateDisplay();
 
-    // Обработчик для кнопки возврата к слайд-шоу
+    // handler for back to slideshow btn
     const backToSlideshowBtn = document.getElementById('back-to-slideshow-btn');
     const scrollContainer = document.querySelector('.scroll-container');
-    const slideshowSection = document.querySelectorAll('.section')[1]; // Вторая секция теперь слайд-шоу
-    const portraitSection = document.querySelectorAll('.section')[2]; // Третья секция - портреты
+    const slideshowSection = document.querySelectorAll('.section')[1]; // second section is slideshow
+    const portraitSection = document.querySelectorAll('.section')[2]; // third section - portraits
 
     let portraitSectionTop = portraitSection.offsetTop;
     let portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
 
-    // Обновляем позиции после полной загрузки страницы
+    // update positions on load
     window.addEventListener('load', () => {
         portraitSectionTop = portraitSection.offsetTop;
         portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
     });
 
-    // Обработчик прокрутки
+    // scroll handler
     scrollContainer.addEventListener('scroll', () => {
         const scrollPosition = scrollContainer.scrollTop;
 
-        // Для отладки: выводим значения в консоль
+        // debug: log pos
         console.log(`scrollPosition: ${scrollPosition}, portraitSectionTop: ${portraitSectionTop}, portraitSectionBottom: ${portraitSectionBottom}`);
 
-        // Показываем кнопку, если пользователь находится в третьей секции (портреты)
-        if (scrollPosition >= portraitSectionTop - 10 && scrollPosition <= portraitSectionBottom + 10) { // Добавляем небольшой отступ
+        // show btn if in portraits section
+        if (scrollPosition >= portraitSectionTop - 10 && scrollPosition <= portraitSectionBottom + 10) { // some margin
             backToSlideshowBtn.style.display = 'flex';
         } else {
             backToSlideshowBtn.style.display = 'none';
         }
     });
 
-    // Перемещение к слайд-шоу секции при клике на кнопку
+    // scroll to slideshow on btn click
     backToSlideshowBtn.addEventListener('click', () => {
         scrollContainer.scrollTo({
             top: slideshowSection.offsetTop,
             behavior: 'smooth'
         });
     });
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+    // toggle fullscreen func
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            // enter fullscreen
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Ошибка при переходе в полноэкранный режим: ${err.message} (${err.name})`);
+            });
+        } else {
+            // exit fullscreen
+            document.exitFullscreen();
+        }
+    }
+
+    // btn click handler
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // update btn icon on fullscreen change
+    document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>'; // compress icon
+        } else {
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>'; // expand icon
+        }
+    });
+     const fullscreenPopup = document.getElementById('fullscreen-popup');
+    const closePopup = document.querySelector('.close-popup');
+    const enterFullscreenBtn = document.getElementById('enter-fullscreen');
+
+    // show popup
+    function showFullscreenPopup() {
+        fullscreenPopup.classList.add('active');
+    }
+
+    // hide popup
+    function hideFullscreenPopup() {
+        fullscreenPopup.classList.remove('active');
+    }
+
+    // show popup after 3 sec
+    setTimeout(showFullscreenPopup, 3000);
+
+    // close popup on btn
+    closePopup.addEventListener('click', hideFullscreenPopup);
+
+    // enter fullscreen on btn
+    enterFullscreenBtn.addEventListener('click', () => {
+        toggleFullscreen();
+        hideFullscreenPopup();
+    });
+
+    // toggle fullscreen again (redundant but kept)
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Помилка при переході в повноекранний режим: ${err.message} (${err.name})`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
 });
