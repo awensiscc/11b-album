@@ -55,16 +55,26 @@
             <div id="fullscreen-popup" class="fullscreen-popup">
     <div class="popup-content">
         <span class="close-popup">&times;</span>
+
         <p>Щоб покращити ваш досвід перегляду, рекомендуємо перейти в повноекранний режим.</p>
         <button id="enter-fullscreen">Перейти в повноекранний режим</button>
+
     </div>
+                 <div class="popup-confirmation-content" style="display: none;">
+                    <p>Більше не показувати це повідомлення?</p>
+                    <div class="confirmation-buttons">
+                        <button id="confirm-hide-popup"><i class="fas fa-check"></i></button>
+                        <button id="cancel-hide-popup"><i class="fas fa-times"></i></button>
+                    </div>
 </div>
+            </div>
         </section>
 
         <!-- slideshow sec -->
         <section class="section">
             <!-- slideshow -->
             <div class="slideshow-container">
+                <div class="slideshow-background"></div>
                 <div class="slideshow">
                     <img src="" alt="Группове фото">
                 </div>
@@ -87,50 +97,51 @@
 
         </section>
 
-        <!-- portraits sec -->
-        <section class="section">
-
-            <!-- students cards -->
-            <div class="container" id="portrait-section">
-                <!-- central card -->
-                <div class="card" id="central-card">
-                    <div class="front">
-                        <div class="photo">
-                            <img src="" alt="Фото учня">
-                            <div class="overlay">
-                                <div class="name">Марія Бандурова</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="back">
-                        <div class="phrase">"Never give up!"</div>
+       <!-- portraits sec -->
+<section class="section" id="portrait-section">
+    <!-- students cards -->
+    <div class="container">
+        <!-- central card -->
+        <div class="card" id="central-card">
+            <div class="front">
+                <div class="photo">
+                    <img src="" alt="Фото учня">
+                    <!-- Overlay для имени -->
+                    <div class="overlay">
+                        <div class="name"></div>
                     </div>
                 </div>
-
-                <!-- side cards -->
-                <div class="side-card left-card">
-                    <img src="" alt="Фото учня">
-                </div>
-                <div class="side-card right-card">
-                    <img src="" alt="Фото учня">
-                </div>
-
-                <!-- made by -->
-                <div class="made-by">
-                    Made by:
-                    <a href="https://t.me/cnkoitsa" target="_blank" rel="noopener noreferrer">@cnkoitsa</a>,
-                    <a href="https://t.me/ueberchirho" target="_blank" rel="noopener noreferrer">@ueberchirho</a>
-                </div>
-
-                <!-- back to slideshow btn -->
-                <div class="back-to-slideshow" id="back-to-slideshow-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 96 960 960" width="48" fill="#fff">
-                        <path d="M480 272q-18.7 0-31.35 12.65Q436 297.3 436 316q0 18.7 12.65 31.35Q461.3 360 480 360t31.35-12.65Q524 334.7 524 316q0-18.7-12.65-31.35Q498.7 272 480 272ZM439 464v352q0 26 17 43t43 17q26 0 43-17t17-43V464h44q19 0 29.5-16.5T634 414L502 282q-12-12-30-12-18 0-30 12L326 414q-11 13-1 29.5T354 464h44Z" />
-                    </svg>
-                </div>
-
             </div>
-        </section>
+            <div class="back">
+                <div class="phrase"></div>
+            </div>
+        </div>
+
+        <!-- side cards -->
+        <div class="side-card left-card">
+            <img src="" alt="Фото учня">
+        </div>
+        <div class="side-card right-card">
+            <img src="" alt="Фото учня">
+        </div>
+
+        <!-- made by -->
+        <div class="made-by">
+            Made by:
+            <a href="https://t.me/cnkoitsa" target="_blank" rel="noopener noreferrer">@cnkoitsa</a>,
+            <a href="https://t.me/ueberchirho" target="_blank" rel="noopener noreferrer">@ueberchirho</a>
+        </div>
+
+        <!-- back to slideshow btn -->
+        <div class="back-to-slideshow" id="back-to-slideshow-btn">
+            <!-- SVG иконка -->
+            <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 96 960 960" width="48" fill="#fff">
+                        <path d="M480 272q-18.7 0-31.35 12.65Q436 297.3 436 316q0 18.7 12.65 31.35Q461.3 360 480 360t31.35-12.65Q524 334.7 524 316q0-18.7-12.65-31.35Q498.7 272 480 272ZM439 464v352q0 26 17 43t43 17q26 0 43-17t17-43V464h44q19 0 29.5-16.5T634 414L502 282q-12-12-30-12-18 0-30 12L326 414q-11 13-1 29.5T354 464h44Z"></path>
+                    </svg>
+        </div>
+    </div>
+</section>
+
 
     </div>
 
