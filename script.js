@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', checkOrientation);
 
     // Массив фотографий с низким и высоким качеством
-    const groupPhotos = [
+  const groupPhotos = [
+        /* vesna                                nachalo   --- */
         { low: 'photo1.webp', high: 'group_photo_1_high.webp' },
         { low: 'photo2.webp', high: 'photo2.jpg' },
         { low: 'photo3.webp', high: 'photo3.jpg' },
@@ -36,7 +37,51 @@ document.addEventListener('DOMContentLoaded', () => {
         { low: 'photo9.webp', high: 'photo9_high.webp' },
         { low: 'photo10.webp', high: 'photo10_high.webp' },
         { low: 'photo11.webp', high: 'photo11_high.webp' },
-        // Добавьте остальные изображения аналогично
+        /* NEW CODE - 22:20>> */
+        { low: 'photo21.webp', high: 'photo21.jpg' },
+        { low: 'photo22.webp', high: 'photo22.jpg' },
+        { low: 'photo23.webp', high: 'photo23.jpg' },
+
+        /*vertical */
+        { low: 'photo13.webp', high: 'photo13.jpg' },
+        { low: 'photo16.webp', high: 'photo16.jpg' },
+        { low: 'photo14.webp', high: 'photo14.jpg' },
+        { low: 'photo15.webp', high: 'photo15.jpg' },
+        { low: 'photo17.webp', high: 'photo17.jpg' },
+        { low: 'photo19.webp', high: 'photo19.jpg' },
+        { low: 'photo20.webp', high: 'photo20.jpg' },
+        { low: 'vesna_last.webp', high: 'vesna_last.jpg' },
+        /* vesna                               end   --- */
+
+        /* osen                        nach ----*/
+        { low: 'osen_horiz_1.webp', high: 'osen_horiz_1.jpg' },
+        { low: 'osen_horiz_2.webp', high: 'osen_horiz_2.jpg' },
+        { low: 'osen_horiz_3.webp', high: 'osen_horiz_3.jpg' },
+        { low: 'osen_horiz_4.webp', high: 'osen_horiz_4.jpg' },
+        { low: 'osen_horiz_5.webp', high: 'osen_horiz_5.jpg' },
+        { low: 'osen_horiz_6.webp', high: 'osen_horiz_6.jpg' },
+        { low: 'osen_horiz_7.webp', high: 'osen_horiz_7.jpg' },
+        { low: 'osen_horiz_8.webp', high: 'osen_horiz_8.jpg' },
+        { low: 'osen_horiz_9.webp', high: 'osen_horiz_9.jpg' },
+        { low: 'osen_horiz_10.webp', high: 'osen_horiz_10.jpg' },
+        { low: 'osen_horiz_11.webp', high: 'osen_horiz_11.jpg' },
+        { low: 'osen_horiz_12.webp', high: 'osen_horiz_12.jpg' },
+        { low: 'osen_horiz_13.webp', high: 'osen_horiz_13.jpg' },
+        { low: 'osen_horiz_14.webp', high: 'osen_horiz_14.jpg' },
+
+
+        /* osen                              vert */
+        { low: 'osen_vert_1.webp', high: 'osen_vert_1.jpg' },
+        { low: 'osen_vert_2.webp', high: 'osen_vert_2.jpg' },
+        { low: 'osen_vert_3.webp', high: 'osen_vert_3.jpg' },
+        { low: 'osen_vert_4.webp', high: 'osen_vert_4.jpg' },
+        { low: 'osen_vert5.webp', high: 'osen_vert5.jpg' },
+        { low: 'osen_vert6.webp', high: 'osen_vert6.jpg' },
+        { low: 'osen_vert7.webp', high: 'osen_vert7.jpg' },
+        { low: 'osen_vert_8.webp', high: 'osen_vert_8.jpg' },
+        { low: 'osen_vert_9.webp', high: 'osen_vert_9.jpg' },
+
+        { low: 'osen_horiz_last.webp', high: 'osen_horiz_last.jpg' },
     ];
 
     let slideIndex = 0;
