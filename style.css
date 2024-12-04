@@ -74,36 +74,7 @@ body.orientation-locked {
     background-color: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
     z-index: 1;
 }
-/*.slideshow-container {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    background-size: 10000px;
-    height: 100%;
-    background-repeat: no-repeat;
-}
 
-
-
-.slideshow {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.slideshow img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    max-width: 100%;
-    max-height: 100%;
-    transform: translate(-50%, -50%);
-    object-fit: contain;
-    cursor: pointer;
-    transition: opacity 0.5s ease-in-out;
-    opacity: 1;
-    border-radius: 20px;
-    box-shadow: 0 0 30px 30px rgba(0, 0, 0, 0.5);*/
 }
 .teacher-container {
     position: relative;
@@ -148,6 +119,7 @@ body.orientation-locked {
     opacity: 1;
     border-radius: 20px;
     box-shadow: 0 0 30px 30px rgba(0, 0, 0, 0.5);
+    flex: 1;
 }
 .teacher-name {
     position: absolute; /* pos relative to parent (.teacher-words) */
@@ -159,6 +131,7 @@ body.orientation-locked {
     color: #e2dfdf; /* text color */
     font-weight: 600; /* boldness */
     text-transform: uppercase; /* uppercase */
+
 }
 .teacher-words {
     max-width: 100%;
@@ -169,6 +142,7 @@ body.orientation-locked {
     padding: 20px; /* padding for text */
     border-radius: 5px; /* rounded corners */
     z-index: 1;
+    flex:1;
 }
 .teacher-words {
     position: relative;
@@ -224,23 +198,41 @@ body.orientation-locked {
 }
 
 /* mobile styles */
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 768px) {
     .teacher-container {
         flex-direction: column;
         text-align: center;
+        padding: 20px;
+    }
+
+    .teacher-photo {
+        margin-bottom: 20px;
     }
 
     .teacher-photo img {
-        width: 80%; /* smaller on mobile */
-        height: auto;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        max-width: 80%;
     }
 
     .teacher-words {
-        max-width: 90%; /* text block on mobile */
-        background-color: rgba(0, 0, 0, 0.6); /* more dark */
-        padding: 15px;
+        padding: 0;
+    }
+
+    .teacher-words h2 {
+        font-size: 1.8em;
+    }
+
+    .teacher-words p {
+        font-size: 1em;
+    }
+
+    .teacher-name {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .teacher-photo img {
+        max-width: 100%;
     }
 
     .teacher-words h2 {
@@ -248,7 +240,7 @@ body.orientation-locked {
     }
 
     .teacher-words p {
-        font-size: 1em;
+        font-size: 0.9em;
     }
 }
 
@@ -276,7 +268,19 @@ body.orientation-locked {
     background-repeat: no-repeat;
 }
 
+.slideshow-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    transform: scale(1.1);
 
+
+}
 
 .slideshow {
     position: relative;
@@ -296,6 +300,7 @@ body.orientation-locked {
     transition: opacity 0.5s ease-in-out;
     opacity: 1;
     box-shadow: 0 0 30px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
 }
 
 /* fade effect */
@@ -499,7 +504,9 @@ body.orientation-locked {
     padding: 20px;
     font-style: italic;
     font-weight: 400;
+    white-space: pre-wrap;
 }
+
 
 /* side cards styles */
 .side-card {
@@ -639,7 +646,7 @@ a:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(32, 29, 29, 0.9); /* Изменил фон на более темный */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -654,7 +661,7 @@ a:hover {
     opacity: 1;
 }
 
-.popup-content {
+.popup-content, .popup-confirmation-content {
     background-color: #fff;
     padding: 20px 30px;
     border-radius: 8px;
@@ -694,3 +701,35 @@ a:hover {
 .popup-content button:hover {
     background-color: #0056b3;
 }
+
+/* Стили для блока подтверждения */
+.popup-confirmation-content {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-confirmation-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.confirmation-buttons button {
+    background-color: transparent;
+    border: none;
+    font-size: 40px;
+    cursor: pointer;
+    color: #333;
+}
+
+.confirmation-buttons button:hover {
+    color: #007BFF;
+}
+
+
