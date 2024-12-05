@@ -1,6 +1,6 @@
 Web Album Creator
 
-This website was created by me and my friend from scratch, using auxiliary tools such as ChatGPT and thorough research. You can use this website to create web versions of school albums and more.
+This website was created by me and my friend from scratch, using auxiliary tools such as AI(ChatGPT v.01-preview) and thorough research. You can use this website to create web versions of school albums and more.
 Features
 
     Customizable Web Albums: Easily create and personalize web-based albums for schools or any other events.
