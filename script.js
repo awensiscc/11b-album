@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', checkOrientation);
 
     // Массив фотографий с низким и высоким качеством
-  const groupPhotos = [
+    const groupPhotos = [
         /* vesna                                nachalo   --- */
         { low: 'photo1.webp', high: 'group_photo_1_high.webp' },
         { low: 'photo2.webp', high: 'photo2.jpg' },
@@ -183,31 +183,31 @@ document.addEventListener('DOMContentLoaded', () => {
             photoLow: '/images/student1.webp',
             photoHigh: '/images/student1.jpg',
             name: 'Микита Дорошенко',
-            phrase: '" qer 3301 qeweff the fddsteg biggest ffddsrwr puzzle fdsgfggfg in fds12gew da dfs6weg wrld eww1ew? who is next?🌊"'
+            phrase: '" qer 3301 qeweff the fddsteg biggest ffddsrwr puzzle fdsgfggfg in fds12gew da dfs6weg wrld eww1ew? who is next?🌊 "'
         },
         {
             photoLow: '/images/student2.webp',
             photoHigh: '/images/student2.jpg',
             name: 'Микита Тельчаров',
-            phrase: '"ACHT👻"'
+            phrase: '" ACHT🎩 "'
         },
         {
             photoLow: '/images/student3.webp',
             photoHigh: '/images/student3.jpg',
             name: 'Надія Шукалюк',
-            phrase: '"Фан встреча Nadiiii"'
+            phrase: '" Фан встреча Nadiiii "'
         },
         {
             photoLow: '/images/student4.webp',
             photoHigh: '/images/student4.webp',
             name: 'Владислава Пучинська',
-            phrase: '"Пучік-Шукік-Шукалік"'
+            phrase: '" Пучік-Шукік-Шукалік "'
         },
         {
             photoLow: '/images/student5.webp',
             photoHigh: '/images/student5.webp',
             name: 'Андрій Іванов',
-            phrase: '"Все буде добре, для кожного з нас."'
+            phrase: '" Все буде добре, для кожного з нас. "'
         },
         {
             photoLow: '/images/student6.webp',
@@ -347,8 +347,53 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
 
     const centralCard = document.getElementById('central-card');
+    if (!centralCard) {
+        console.error('centralCard не найден');
+        return;
+    }
     const leftCard = document.querySelector('.left-card');
     const rightCard = document.querySelector('.right-card');
+
+    // Получаем элемент подсказки
+    const hint = centralCard.querySelector('.hint');
+    if (!hint) {
+        console.error('hint не найден внутри centralCard');
+        return;
+    }
+
+    console.log('centralCard:', centralCard);
+    console.log('hint:', hint);
+
+    // Проверяем, показывали ли мы уже подсказку ранее
+    let hintShown = localStorage.getItem('cardHintShown');
+
+    if (hintShown) {
+        hint.style.display = 'none';
+    } else {
+        hint.style.display = 'flex';
+    }
+
+    // Функция для переворота карточки
+    function flipCard() {
+        // Проверяем, есть ли фраза у текущего студента
+        if (students[currentIndex].phrase && students[currentIndex].phrase.trim() !== '') {
+            centralCard.classList.toggle('flip');
+
+            // Если подсказка видна, скрываем её и сохраняем состояние
+            if (hint && hint.style.display !== 'none') {
+                hint.style.display = 'none';
+                localStorage.setItem('cardHintShown', 'true');
+            }
+        }
+    }
+
+    // Добавляем обработчик клика на центральную карточку
+    centralCard.addEventListener('click', flipCard);
+
+    // Добавляем обработчик клика на подсказку
+    if (hint) {
+        hint.addEventListener('click', flipCard);
+    }
 
     // Функция обновления отображения карточек
     function updateDisplay(direction = null) {
@@ -398,13 +443,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Проверка наличия фразы
             if (students[currentIndex].phrase && students[currentIndex].phrase.trim() !== '') {
-                // Добавляем обработчик клика и меняем курсор на указатель
+                // Показываем подсказку, если она еще не была показана
+                let hintShown = localStorage.getItem('cardHintShown');
+                if (!hintShown) {
+                    hint.style.display = 'flex';
+                } else {
+                    hint.style.display = 'none';
+                }
+                // Устанавливаем курсор указателя
                 centralCard.style.cursor = 'pointer';
-                centralCard.addEventListener('click', flipCard);
             } else {
-                // Убираем обработчик клика и меняем курсор на обычный
+                // Скрываем подсказку и меняем курсор
+                hint.style.display = 'none';
                 centralCard.style.cursor = 'default';
-                centralCard.removeEventListener('click', flipCard);
             }
 
             // Обновляем боковые карточки
@@ -452,11 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             updateContent();
         }
-    }
-
-    // Обработчик для переворота карточки
-    function flipCard() {
-        centralCard.classList.toggle('flip');
     }
 
     // Обработчики клика для боковых карточек
@@ -565,10 +611,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Функция для определения устройств iOS
     function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const ua = window.navigator.userAgent;
+        const iOS = /iPad|iPhone|iPod/.test(ua);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+        return iOS || isSafari;
     }
 
-    // Скрываем кнопку и всплывающее окно на iOS
+    // Скрываем кнопку и всплывающее окно на iOS и Safari
     if (isIOS()) {
         fullscreenBtn.style.display = 'none';
         fullscreenPopup.style.display = 'none';
