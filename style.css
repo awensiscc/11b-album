@@ -5,7 +5,10 @@ body {
     font-family: "Inter", sans-serif;
     color: #000000;
     overflow: hidden;
-    background-color: #201D1D;
+    background-color: #201d1d8c;
+    background-image: url('cartographer.png');
+    background-repeat: repeat;
+    background-blend-mode: overlay;
 }
 
 /* rotate msg */
@@ -16,7 +19,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #201D1D;
+    background-color: #201d1d3b;
     color: #fff;
     z-index: 1000;
     align-items: center;
@@ -226,7 +229,13 @@ body.orientation-locked {
     }
 
     .teacher-name {
+        position: static;
+        margin-top: 20px;
         text-align: center;
+        font-size: 1em; /* Вы можете настроить размер шрифта */
+        color: #e2dfdf; /* Цвет текста */
+        font-weight: 600;
+        text-transform: uppercase;
     }
 }
 
@@ -423,7 +432,7 @@ body.orientation-locked {
 }
 
 .card .back {
-    background-color: #ffecbe;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
     transform: rotateY(180deg);
     display: flex;
     align-items: center;
@@ -498,13 +507,16 @@ body.orientation-locked {
     text-transform: uppercase;
 }
 
+
 .back .phrase {
-    font-size: 1.5em;
-    text-align: center;
-    padding: 20px;
-    font-style: italic;
-    font-weight: 400;
-    white-space: pre-wrap;
+      font-family: "Amatic SC", sans-serif;
+      font-size: 1.5em;
+      text-align: center;
+      padding: 20px;
+      font-style: normal;
+      font-weight: 700;
+      white-space: pre-wrap;
+      color: black;
 }
 
 
@@ -617,7 +629,7 @@ body.orientation-locked {
     }
 
     .back .phrase {
-        font-size: 1em;
+        font-size: 2em;
     }
 
     .side-card {
@@ -732,4 +744,33 @@ a:hover {
     color: #007BFF;
 }
 
+/* Стили для подсказки */
+.hint {
+  position: absolute;
+  z-index: 3;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9em;
+  cursor: pointer;
+  animation: pulse 1.5s infinite;
+}
+
+.hint i {
+  font-size: 1.2em;
+}
+
+/* Анимация пульсации */
+@keyframes pulse {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.05); }
+  100% { transform: translateX(-50%) scale(1); }
+}
 
