@@ -9,6 +9,7 @@ body {
     background-image: url('cartographer.png');
     background-repeat: repeat;
     background-blend-mode: overlay;
+    background-size: cover;
 }
 
 /* rotate msg */
