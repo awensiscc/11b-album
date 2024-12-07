@@ -4,12 +4,11 @@ body {
     padding: 0;
     font-family: "Inter", sans-serif;
     color: #000000;
-    /*overflow: hidden;*/
+    overflow: hidden;
     background-color: #726d6d;
     background-image: url('cartographer.png');
     background-repeat: repeat;
     background-blend-mode: overlay;
-    background-size: cover;
 }
 
 /* rotate msg */
@@ -126,7 +125,7 @@ body.orientation-locked {
     flex: 1;
 }
 .teacher-name {
-    position: relative; /* pos relative to parent (.teacher-words) */
+    position: absolute; /* pos relative to parent (.teacher-words) */
     bottom: 20px; /* from bottom */
     right: 20px; /* from right */
     font-family: 'Lora', serif;
@@ -141,7 +140,7 @@ body.orientation-locked {
     max-width: 100%;
     font-family: 'Roboto', sans-serif;
     position: relative;
-    transform: none;
+    transform: translate(+30%, -0%);
     color: white; /* white text for contrast */
     padding: 20px; /* padding for text */
     border-radius: 5px; /* rounded corners */
@@ -170,28 +169,7 @@ body.orientation-locked {
     z-index: 1; /* text above overlay */
     color: #fff; /* text color */
 }
-@media screen and (max-width: 768px) {
-    .teacher-container {
-        flex-direction: column;
-        padding: 10px;
-    }
 
-    .teacher-photo img {
-        max-width: 80%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .teacher-words {
-        padding: 10px;
-    }
-
-    .teacher-name {
-        font-size: 0.9em;
-    }
-
-    /* Дополнительные стили для других элементов */
-}
 .highlight::before {
     content: '';
     position: absolute;
