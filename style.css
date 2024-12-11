@@ -712,7 +712,7 @@ a:hover {
 
 /* scroll down hint (slide-hint) */
 .slide-hint {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
