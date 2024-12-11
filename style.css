@@ -1,10 +1,15 @@
-/* general styles */
-body {
+html, body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden;
+}
+
+/* general styles */
+body {
     font-family: "Inter", sans-serif;
     color: #000000;
-    overflow: hidden;
     background-color: #726d6d;
     background-image: url('cartographer.png');
     background-repeat: repeat;
@@ -47,6 +52,15 @@ body.orientation-locked {
 }
 
 /* sections */
+.section {
+    scroll-snap-align: start;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* teacher sec styles */
 #teacher-section {
     position: relative;
@@ -163,41 +177,36 @@ body.orientation-locked {
     z-index: 1; /* text above overlay */
 }
 
+
 .highlight {
     position: relative;
-    display: inline-block; /* limit overlay to text */
-    z-index: 1; /* text above overlay */
-    color: #fff; /* text color */
+    display: inline-block;
+    z-index: 1;
+    color: #fff;
 }
 
 .highlight::before {
     content: '';
     position: absolute;
-    top: 50%; /* center overlay */
+    top: 50%;
     left: 0;
-    width: 100%; /* overlay width matches text */
-    height: 1.4em; /* overlay height */
+    width: 100%;
+    height: 1.4em;
     background: linear-gradient(90deg, #ffd65e, #ffc107, #ffca28);
     mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0) 100%);
     -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0) 100%);
     background-blend-mode: lighten;
-    z-index: -1; /* overlay behind text */
-    transform: translateY(-50%) rotate(-1deg); /* slight tilt */
-    border-radius: 5px; /* rounded overlay */
-    opacity: 0.65; /* semi-transparent */
-    filter: blur(0.5px); /* slight blur */
+    z-index: -1;
+    transform: translateY(-50%) rotate(-1deg);
+    border-radius: 5px;
+    opacity: 0.65;
+    filter: blur(0.5px);
 }
 
 .teacher-words h2 {
     font-size: 2.2em;
     margin-bottom: 20px;
     font-weight: 700;
-}
-
-.teacher-words p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    margin-bottom: 15px;
 }
 
 /* mobile styles */
@@ -216,10 +225,6 @@ body.orientation-locked {
         max-width: 80%;
     }
 
-    .teacher-words {
-        padding: 0;
-    }
-
     .teacher-words h2 {
         font-size: 1.8em;
     }
@@ -232,8 +237,8 @@ body.orientation-locked {
         position: static;
         margin-top: 20px;
         text-align: center;
-        font-size: 1em; /* Вы можете настроить размер шрифта */
-        color: #e2dfdf; /* Цвет текста */
+        font-size: 1em;
+        color: #e2dfdf;
         font-weight: 600;
         text-transform: uppercase;
     }
@@ -253,15 +258,6 @@ body.orientation-locked {
     }
 }
 
-.section {
-    scroll-snap-align: start;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* hide scrollbars */
 .scroll-container::-webkit-scrollbar {
     display: none;
@@ -272,7 +268,6 @@ body.orientation-locked {
     position: relative;
     overflow: hidden;
     width: 100%;
-    background-size: 10000px;
     height: 100%;
     background-repeat: no-repeat;
 }
@@ -287,8 +282,6 @@ body.orientation-locked {
     background-position: center;
     filter: blur(8px);
     transform: scale(1.1);
-
-
 }
 
 .slideshow {
@@ -310,23 +303,6 @@ body.orientation-locked {
     opacity: 1;
     box-shadow: 0 0 30px 30px rgba(0, 0, 0, 0.5);
     border-radius: 12px;
-}
-
-/* fade effect */
-.slideshow img.fade-out {
-    opacity: 0;
-}
-
-/* dark overlay for controls */
-.slideshow::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-    pointer-events: none;
 }
 
 /* slideshow controls */
@@ -351,10 +327,6 @@ body.orientation-locked {
 
 .slideshow-controls button:hover {
     color: #ddd;
-}
-
-.slideshow-controls i {
-    pointer-events: none;
 }
 
 /* modal styles */
@@ -507,18 +479,16 @@ body.orientation-locked {
     text-transform: uppercase;
 }
 
-
 .back .phrase {
-      font-family: "Amatic SC", sans-serif;
-      font-size: 1.5em;
-      text-align: center;
-      padding: 20px;
-      font-style: normal;
-      font-weight: 700;
-      white-space: pre-wrap;
-      color: black;
+    font-family: "Amatic SC", sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+    padding: 20px;
+    font-style: normal;
+    font-weight: 700;
+    white-space: pre-wrap;
+    color: black;
 }
-
 
 /* side cards styles */
 .side-card {
@@ -555,31 +525,29 @@ body.orientation-locked {
 /* made by */
 .made-by {
     position: absolute;
-    bottom: 10px; /* at bottom */
-    right: 20px; /* on right */
-    font-size: 1em; /* normal text size */
+    bottom: 10px;
+    right: 20px;
+    font-size: 1em;
     color: #fff;
-    opacity: 0.7; /* semi-transparent */
-    text-align: center; /* center text */
+    opacity: 0.7;
+    text-align: center;
 }
 
-/* reduce block & text on mobile */
 @media screen and (max-width: 900px) {
     .made-by {
-        font-size: 0.8em; /* smaller text */
-        bottom: 5px; /* closer to edge */
-        right: 10px; /* smaller right margin */
+        font-size: 0.8em;
+        bottom: 5px;
+        right: 10px;
     }
 
     .made-by a {
-        font-size: 0.8em; /* smaller links */
+        font-size: 0.8em;
     }
 }
 
-
-/* back to slideshow btn */
+/* back to slideshow btn - теперь absolute внутри секции портретов */
 .back-to-slideshow {
-    position: fixed;
+    position: absolute;
     bottom: 40px;
     right: 20px;
     z-index: 1000;
@@ -610,41 +578,10 @@ body.orientation-locked {
     fill: black;
 }
 
-/* remove gaps between elems */
-* {
-    box-sizing: border-box;
-}
-
-/* mobile horiz orient styles */
-@media screen and (max-width: 900px) {
-    .card {
-        width: 30%;
-        height: 90%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .overlay {
-        font-size: 1em;
-    }
-
-    .back .phrase {
-        font-size: 2em;
-    }
-
-    .side-card {
-        width: 100px;
-        height: 140px;
-    }
-
-    .slideshow-controls button {
-        font-size: 1em;
-    }
-}
 a {
     color: white;
     text-decoration: none;
-    transition: all .1;
+    transition: all .1s;
 }
 
 a:hover {
@@ -658,7 +595,7 @@ a:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(32, 29, 29, 0.9); /* Изменил фон на более темный */
+    background-color: rgba(32, 29, 29, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -714,7 +651,7 @@ a:hover {
     background-color: #0056b3;
 }
 
-/* Стили для блока подтверждения */
+/* Подтверждение скрытия попапа */
 .popup-confirmation-content {
     display: none;
     flex-direction: column;
@@ -744,7 +681,7 @@ a:hover {
     color: #007BFF;
 }
 
-/* Стили для подсказки */
+/* hint */
 .hint {
   position: absolute;
   z-index: 3;
@@ -760,14 +697,12 @@ a:hover {
   gap: 8px;
   font-size: 0.9em;
   cursor: pointer;
-  animation: hint-pulse 1.5s infinite; /* Используем уникальное имя для анимации */
+  animation: hint-pulse 1.5s infinite;
 }
 
 .hint i {
   font-size: 1.2em;
 }
-
-/* Анимация пульсации */
 
 @keyframes hint-pulse {
   0% { transform: translate(-50%, -50%) scale(1); }
@@ -775,41 +710,7 @@ a:hover {
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-
-/* Scroll Down Hint Styles */
-#scroll-down-hint {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-    cursor: pointer;
-    animation: pulse 2s infinite;
-    color: #fff;
-    font-size: 2em;
-    display: none; /* Скрыто по умолчанию */
-    align-items: center;
-    justify-content: center;
-}
-
-#scroll-down-hint i {
-    animation: bounce 2s infinite;
-}
-
-/* Пульсирующая анимация */
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Анимация подпрыгивания стрелки */
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-}
-
-
+/* scroll down hint (slide-hint) */
 .slide-hint {
     position: absolute;
     bottom: 20px;
@@ -821,13 +722,38 @@ a:hover {
     border-radius: 50%;
     font-size: 1.5em;
     animation: bounce 1.5s infinite;
-    z-index: 2000; /* Щоб бути поверх інших елементів */
+    z-index: 2000;
 }
 
-/* Анімація bounce */
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
   40% {transform: translateX(-50%) translateY(-10px);}
   60% {transform: translateX(-50%) translateY(-5px);}
 }
 
+/* mobile horiz orient styles */
+@media screen and (max-width: 900px) {
+    .card {
+        width: 30%;
+        height: 90%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .overlay {
+        font-size: 1em;
+    }
+
+    .back .phrase {
+        font-size: 2em;
+    }
+
+    .side-card {
+        width: 100px;
+        height: 140px;
+    }
+
+    .slideshow-controls button {
+        font-size: 1em;
+    }
+}
