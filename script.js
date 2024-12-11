@@ -646,4 +646,42 @@ document.addEventListener('DOMContentLoaded', () => {
         popupConfirmationContent.style.display = 'none';
         hideFullscreenPopup();
     });
+    const slideHint = document.getElementById('slide-hint');
+let hintHidden = localStorage.getItem('hintHidden');
+
+// Если подсказка раньше не скрывалась, показываем её при загрузке
+if (!hintHidden && slideHint) {
+    slideHint.style.display = 'flex';
+} else if (slideHint) {
+    slideHint.style.display = 'none';
+}
+
+const thirdSection = sections[2]; // третья секция
+let thirdSectionTop = thirdSection.offsetTop;
+
+window.addEventListener('load', () => {
+    thirdSectionTop = thirdSection.offsetTop;
+});
+
+// Отслеживаем скролл
+scrollContainer.addEventListener('scroll', () => {
+    // ВАЖНО: Определяем scrollPosition в каждом событии скролла
+    const scrollPosition = scrollContainer.scrollTop;
+    const viewportHeight = scrollContainer.clientHeight;
+
+    // Проверяем, достиг ли пользователь третьего слайда
+    if (!hintHidden && slideHint && (scrollPosition + viewportHeight >= thirdSectionTop)) {
+        // Скрываем подсказку навсегда
+        slideHint.style.display = 'none';
+        localStorage.setItem('hintHidden', 'true');
+        hintHidden = 'true';
+    } else {
+        // Если подсказка не скрыта навсегда и мы НЕ достигли третьего слайда:
+        // Значит мы на первом или втором слайде
+        if (!hintHidden && slideHint) {
+            slideHint.style.display = 'flex';
+        }
+    }
+});
+
 });
