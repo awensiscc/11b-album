@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Массив фотографий с низким и высоким качеством
     const groupPhotos = [
-        /* vesna                                nachalo   --- */
         { low: 'photo1.webp', high: 'group_photo_1_high.webp' },
         { low: 'photo2.webp', high: 'photo2.jpg' },
         { low: 'photo3.webp', high: 'photo3.jpg' },
@@ -37,12 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { low: 'photo9.webp', high: 'photo9_high.webp' },
         { low: 'photo10.webp', high: 'photo10_high.webp' },
         { low: 'photo11.webp', high: 'photo11_high.webp' },
-        /* NEW CODE - 22:20>> */
         { low: 'photo21.webp', high: 'photo21.jpg' },
         { low: 'photo22.webp', high: 'photo22.jpg' },
         { low: 'photo23.webp', high: 'photo23.jpg' },
-
-        /*vertical */
         { low: 'photo13.webp', high: 'photo13.jpg' },
         { low: 'photo16.webp', high: 'photo16.jpg' },
         { low: 'photo14.webp', high: 'photo14.jpg' },
@@ -51,9 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { low: 'photo19.webp', high: 'photo19.jpg' },
         { low: 'photo20.webp', high: 'photo20.jpg' },
         { low: 'vesna_last.webp', high: 'vesna_last.jpg' },
-        /* vesna                               end   --- */
-
-        /* osen                        nach ----*/
         { low: 'osen_horiz_1.webp', high: 'osen_horiz_1.jpg' },
         { low: 'osen_horiz_2.webp', high: 'osen_horiz_2.jpg' },
         { low: 'osen_horiz_3.webp', high: 'osen_horiz_3.jpg' },
@@ -68,9 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { low: 'osen_horiz_12.webp', high: 'osen_horiz_12.jpg' },
         { low: 'osen_horiz_13.webp', high: 'osen_horiz_13.jpg' },
         { low: 'osen_horiz_14.webp', high: 'osen_horiz_14.jpg' },
-
-
-        /* osen                              vert */
         { low: 'osen_vert_1.webp', high: 'osen_vert_1.jpg' },
         { low: 'osen_vert_2.webp', high: 'osen_vert_2.jpg' },
         { low: 'osen_vert_3.webp', high: 'osen_vert_3.jpg' },
@@ -80,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { low: 'osen_vert7.webp', high: 'osen_vert7.jpg' },
         { low: 'osen_vert_8.webp', high: 'osen_vert_8.jpg' },
         { low: 'osen_vert_9.webp', high: 'osen_vert_9.jpg' },
-
         { low: 'osen_horiz_last.webp', high: 'osen_horiz_last.jpg' },
     ];
 
@@ -105,17 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentPhoto = groupPhotos[slideIndex];
 
-        // Устанавливаем низкокачественное изображение
+        // Низкое качество сначала
         slideshowImage.src = `/group_photos/${currentPhoto.low}`;
-
-        // Устанавливаем фон с низким качеством
         slideshowBackground.style.backgroundImage = `url('/group_photos/${currentPhoto.low}')`;
 
-        // Предзагрузка высококачественного изображения
+        // Предзагрузка высокого качества
         const highResImage = new Image();
         highResImage.src = `/group_photos/${currentPhoto.high}`;
         highResImage.onload = () => {
-            // Заменяем на высококачественное изображение после загрузки
             slideshowImage.src = `/group_photos/${currentPhoto.high}`;
             slideshowBackground.style.backgroundImage = `url('/group_photos/${currentPhoto.high}')`;
         };
@@ -150,34 +136,31 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = !isPlaying;
     });
 
-    // Запускаем слайдшоу при загрузке
+    // Запускаем слайдшоу
     showSlide(slideIndex);
     startSlideshow();
 
-    // Модальное окно для увеличения изображения
+    // Модальное окно для увеличения
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-image');
     const closeBtn = document.querySelector('.modal .close');
 
-    // Открываем модальное окно при клике на изображение
     slideshowImage.addEventListener('click', () => {
         modal.style.display = 'block';
         modalImg.src = slideshowImage.src;
     });
 
-    // Закрываем модальное окно при клике на кнопку закрытия
     closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
-    // Закрываем модальное окно при клике вне изображения
     modal.addEventListener('click', (e) => {
         if (e.target == modal) {
             modal.style.display = 'none';
         }
     });
 
-    // Массив студентов с низким и высоким качеством фотографий
+    // Массив студентов
     const students = [
         {
             photoLow: '/images/student1.webp',
@@ -341,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Кіра Лафазан',
             phrase: ''
         }
-        // Добавьте остальных студентов аналогично
     ];
 
     let currentIndex = 0;
@@ -354,17 +336,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const leftCard = document.querySelector('.left-card');
     const rightCard = document.querySelector('.right-card');
 
-    // Получаем элемент подсказки
     const hint = centralCard.querySelector('.hint');
     if (!hint) {
         console.error('hint не найден внутри centralCard');
         return;
     }
 
-    console.log('centralCard:', centralCard);
-    console.log('hint:', hint);
-
-    // Проверяем, показывали ли мы уже подсказку ранее
     let hintShown = localStorage.getItem('cardHintShown');
 
     if (hintShown) {
@@ -373,13 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
         hint.style.display = 'flex';
     }
 
-    // Функция для переворота карточки
     function flipCard() {
-        // Проверяем, есть ли фраза у текущего студента
         if (students[currentIndex].phrase && students[currentIndex].phrase.trim() !== '') {
             centralCard.classList.toggle('flip');
-
-            // Если подсказка видна, скрываем её и сохраняем состояние
             if (hint && hint.style.display !== 'none') {
                 hint.style.display = 'none';
                 localStorage.setItem('cardHintShown', 'true');
@@ -387,21 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Добавляем обработчик клика на центральную карточку
     centralCard.addEventListener('click', flipCard);
-
-    // Добавляем обработчик клика на подсказку
     if (hint) {
         hint.addEventListener('click', flipCard);
     }
 
-    // Функция обновления отображения карточек
     function updateDisplay(direction = null) {
         if (!centralCard || !leftCard || !rightCard) {
             return;
         }
 
-        // Добавляем класс анимации только если direction задан
         if (direction === 'left') {
             centralCard.classList.add('blur-out-right');
         } else if (direction === 'right') {
@@ -409,31 +377,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const updateContent = () => {
-            // Обновляем центральную карточку
             const frontImg = centralCard.querySelector('.front .photo img');
             const nameDiv = centralCard.querySelector('.overlay .name');
             const phraseDiv = centralCard.querySelector('.back .phrase');
 
-            // Устанавливаем низкокачественное изображение
             frontImg.src = `${students[currentIndex].photoLow}`;
-
-            // Предзагрузка высококачественного изображения
             const highResImage = new Image();
             highResImage.src = `${students[currentIndex].photoHigh}`;
             highResImage.onload = () => {
-                // Заменяем на высококачественное изображение после загрузки
                 frontImg.src = `${students[currentIndex].photoHigh}`;
             };
 
             nameDiv.textContent = students[currentIndex].name;
             phraseDiv.textContent = students[currentIndex].phrase || '';
 
-            // Сбрасываем переворот
             if (centralCard.classList.contains('flip')) {
                 centralCard.classList.remove('flip');
             }
 
-            // Убираем старые классы анимации и добавляем новые
             centralCard.classList.remove('blur-out-left', 'blur-out-right');
             if (direction === 'left') {
                 centralCard.classList.add('blur-in-left');
@@ -441,30 +402,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 centralCard.classList.add('blur-in-right');
             }
 
-            // Проверка наличия фразы
             if (students[currentIndex].phrase && students[currentIndex].phrase.trim() !== '') {
-                // Показываем подсказку, если она еще не была показана
                 let hintShown = localStorage.getItem('cardHintShown');
                 if (!hintShown) {
                     hint.style.display = 'flex';
                 } else {
                     hint.style.display = 'none';
                 }
-                // Устанавливаем курсор указателя
                 centralCard.style.cursor = 'pointer';
             } else {
-                // Скрываем подсказку и меняем курсор
                 hint.style.display = 'none';
                 centralCard.style.cursor = 'default';
             }
 
-            // Обновляем боковые карточки
             if (currentIndex > 0) {
                 leftCard.style.display = 'block';
                 const leftImg = leftCard.querySelector('img');
                 leftImg.src = `${students[currentIndex - 1].photoLow}`;
 
-                // Предзагрузка высококачественного изображения
                 const leftHighResImage = new Image();
                 leftHighResImage.src = `${students[currentIndex - 1].photoHigh}`;
                 leftHighResImage.onload = () => {
@@ -479,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rightImg = rightCard.querySelector('img');
                 rightImg.src = `${students[currentIndex + 1].photoLow}`;
 
-                // Предзагрузка высококачественного изображения
                 const rightHighResImage = new Image();
                 rightHighResImage.src = `${students[currentIndex + 1].photoHigh}`;
                 rightHighResImage.onload = () => {
@@ -489,7 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 rightCard.style.display = 'none';
             }
 
-            // Убираем классы анимации после завершения
             if (direction) {
                 setTimeout(() => {
                     centralCard.classList.remove('blur-in-left', 'blur-in-right');
@@ -497,7 +450,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Если direction задан, ждем окончания анимации
         if (direction) {
             setTimeout(updateContent, 500);
         } else {
@@ -505,7 +457,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Обработчики клика для боковых карточек
     leftCard.addEventListener('click', () => {
         if (currentIndex > 0) {
             currentIndex--;
@@ -520,30 +471,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Инициализируем отображение
     updateDisplay();
 
-    // Обработчик для кнопки "Назад к слайдшоу"
     const backToSlideshowBtn = document.getElementById('back-to-slideshow-btn');
     const scrollContainer = document.querySelector('.scroll-container');
     const sections = document.querySelectorAll('.section');
-    const slideshowSection = sections[1]; // вторая секция - слайдшоу
-    const portraitSection = sections[2]; // третья секция - портреты
+    const slideshowSection = sections[1];
+    const portraitSection = sections[2];
 
     let portraitSectionTop = portraitSection.offsetTop;
     let portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
 
-    // Обновляем позиции при загрузке
     window.addEventListener('load', () => {
         portraitSectionTop = portraitSection.offsetTop;
         portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
     });
 
-    // Обработчик скролла
     scrollContainer.addEventListener('scroll', () => {
         const scrollPosition = scrollContainer.scrollTop;
 
-        // Показываем кнопку, если находимся в секции портретов
+        // показываем кнопку, если в зоне портретов
         if (scrollPosition >= portraitSectionTop - 10 && scrollPosition <= portraitSectionBottom + 10) {
             backToSlideshowBtn.style.display = 'flex';
         } else {
@@ -551,7 +498,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Скроллим к слайдшоу при клике на кнопку
     backToSlideshowBtn.addEventListener('click', () => {
         scrollContainer.scrollTo({
             top: slideshowSection.offsetTop,
@@ -568,48 +514,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const popupContent = document.querySelector('.popup-content');
     const popupConfirmationContent = document.querySelector('.popup-confirmation-content');
 
-    // Функция переключения полноэкранного режима
     function toggleFullscreen() {
         if (!document.fullscreenElement) {
-            // Входим в полноэкранный режим
             document.documentElement.requestFullscreen().catch(err => {
                 alert(`Ошибка при переходе в полноэкранный режим: ${err.message} (${err.name})`);
             });
         } else {
-            // Выходим из полноэкранного режима
             document.exitFullscreen();
         }
     }
 
-    // Обработчик клика по кнопке "Перейти в повноекранний режим"
     enterFullscreenBtn.addEventListener('click', () => {
         toggleFullscreen();
         hideFullscreenPopup();
     });
 
-    // Обработчик клика по кнопке полноэкранного режима в правом нижнем углу
     fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-    // Обновляем иконку кнопки при изменении полноэкранного режима
     document.addEventListener('fullscreenchange', () => {
         if (document.fullscreenElement) {
-            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>'; // Иконка для выхода
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
         } else {
-            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>'; // Иконка для входа
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
         }
     });
 
-    // Показываем всплывающее окно
     function showFullscreenPopup() {
         fullscreenPopup.classList.add('active');
     }
 
-    // Скрываем всплывающее окно
     function hideFullscreenPopup() {
         fullscreenPopup.classList.remove('active');
     }
 
-    // Функция для определения устройств iOS
     function isIOS() {
         const ua = window.navigator.userAgent;
         const iOS = /iPad|iPhone|iPod/.test(ua);
@@ -617,71 +554,68 @@ document.addEventListener('DOMContentLoaded', () => {
         return iOS || isSafari;
     }
 
-    // Скрываем кнопку и всплывающее окно на iOS и Safari
     if (isIOS()) {
         fullscreenBtn.style.display = 'none';
         fullscreenPopup.style.display = 'none';
     } else {
-        // Показываем всплывающее окно после 3 секунд, если пользователь не отключил его ранее
         if (!localStorage.getItem('hideFullscreenPopup')) {
             setTimeout(showFullscreenPopup, 3000);
         }
     }
 
-    // Обработчик для кнопки закрытия (крестик)
     closePopup.addEventListener('click', () => {
-        // Показываем блок подтверждения
         popupContent.style.display = 'none';
         popupConfirmationContent.style.display = 'flex';
     });
 
-    // Обработчик для кнопки подтверждения (галочка)
     confirmHidePopupBtn.addEventListener('click', () => {
         localStorage.setItem('hideFullscreenPopup', 'true');
         hideFullscreenPopup();
     });
 
-    // Обработчик для кнопки отмены (крестик)
     cancelHidePopupBtn.addEventListener('click', () => {
         popupConfirmationContent.style.display = 'none';
         hideFullscreenPopup();
     });
+
     const slideHint = document.getElementById('slide-hint');
-let hintHidden = localStorage.getItem('hintHidden');
+    let hintHidden = localStorage.getItem('hintHidden');
 
-// Если подсказка раньше не скрывалась, показываем её при загрузке
-if (!hintHidden && slideHint) {
-    slideHint.style.display = 'flex';
-} else if (slideHint) {
-    slideHint.style.display = 'none';
-}
-
-const thirdSection = sections[2]; // третья секция
-let thirdSectionTop = thirdSection.offsetTop;
-
-window.addEventListener('load', () => {
-    thirdSectionTop = thirdSection.offsetTop;
-});
-
-// Отслеживаем скролл
-scrollContainer.addEventListener('scroll', () => {
-    // ВАЖНО: Определяем scrollPosition в каждом событии скролла
-    const scrollPosition = scrollContainer.scrollTop;
-    const viewportHeight = scrollContainer.clientHeight;
-
-    // Проверяем, достиг ли пользователь третьего слайда
-    if (!hintHidden && slideHint && (scrollPosition + viewportHeight >= thirdSectionTop)) {
-        // Скрываем подсказку навсегда
+    // Если подсказка не скрывалась ранее, показываем
+    if (!hintHidden && slideHint) {
+        slideHint.style.display = 'flex';
+    } else if (slideHint) {
         slideHint.style.display = 'none';
-        localStorage.setItem('hintHidden', 'true');
-        hintHidden = 'true';
-    } else {
-        // Если подсказка не скрыта навсегда и мы НЕ достигли третьего слайда:
-        // Значит мы на первом или втором слайде
-        if (!hintHidden && slideHint) {
-            slideHint.style.display = 'flex';
-        }
     }
-});
+
+    const thirdSection = sections[2];
+    let thirdSectionTop = thirdSection.offsetTop;
+
+    window.addEventListener('load', () => {
+        thirdSectionTop = thirdSection.offsetTop;
+    });
+
+    // Отслеживаем скролл
+    scrollContainer.addEventListener('scroll', () => {
+        const scrollPosition = scrollContainer.scrollTop;
+        const viewportHeight = scrollContainer.clientHeight;
+
+        // Проверяем достижение третьей секции или конца
+        if (!hintHidden && slideHint) {
+            // Если пользователь достиг третьей секции (портретной)
+            // или конца скролла, скрываем подсказку навсегда
+            if ((scrollPosition + viewportHeight >= thirdSectionTop) ||
+                (scrollPosition + viewportHeight >= scrollContainer.scrollHeight)) {
+                slideHint.style.display = 'none';
+                localStorage.setItem('hintHidden', 'true');
+                hintHidden = 'true';
+            } else {
+                // Иначе, если ещё не достигли третьей секции и подсказка не скрыта
+                if (!hintHidden) {
+                    slideHint.style.display = 'flex';
+                }
+            }
+        }
+    });
 
 });
