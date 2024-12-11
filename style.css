@@ -629,7 +629,7 @@ body.orientation-locked {
     }
 
     .back .phrase {
-        font-size: 1.5em;
+        font-size: 2em;
     }
 
     .side-card {
@@ -772,5 +772,61 @@ a:hover {
   0% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.05); }
   100% { transform: translateX(-50%) scale(1); }
+}
+
+
+/* Scroll Down Hint Styles */
+#scroll-down-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+    color: #fff;
+    font-size: 2em;
+    display: none; /* Скрыто по умолчанию */
+    align-items: center;
+    justify-content: center;
+}
+
+#scroll-down-hint i {
+    animation: bounce 2s infinite;
+}
+
+/* Пульсирующая анимация */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Анимация подпрыгивания стрелки */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+
+.slide-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    animation: bounce 1.5s infinite;
+    z-index: 2000; /* Щоб бути поверх інших елементів */
+}
+
+/* Анімація bounce */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+  40% {transform: translateX(-50%) translateY(-10px);}
+  60% {transform: translateX(-50%) translateY(-5px);}
 }
 
