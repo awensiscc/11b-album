@@ -748,9 +748,9 @@ a:hover {
 .hint {
   position: absolute;
   z-index: 3;
-  bottom: 50%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   padding: 8px 12px;
@@ -760,7 +760,7 @@ a:hover {
   gap: 8px;
   font-size: 0.9em;
   cursor: pointer;
-  animation: pulse 1.5s infinite;
+  animation: hint-pulse 1.5s infinite; /* Используем уникальное имя для анимации */
 }
 
 .hint i {
@@ -768,10 +768,11 @@ a:hover {
 }
 
 /* Анимация пульсации */
-@keyframes pulse {
-  0% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.05); }
-  100% { transform: translateX(-50%) scale(1); }
+
+@keyframes hint-pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 
