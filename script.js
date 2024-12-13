@@ -1,30 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Функция для проверки ориентации устройства
+    // func dlya cheko orient dev
     function checkOrientation() {
         const rotateMessage = document.getElementById('rotate-message');
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
 
         if (isPortrait) {
-            // Если вертикально, показываем сообщение и блокируем скролл
+            // if vert, show msg & block scroll
             rotateMessage.style.display = 'flex';
             document.body.classList.add('orientation-locked');
         } else {
-            // Если горизонтально, скрываем сообщение и разблокируем скролл
+            // else horiz, hide msg & unblock scroll
             rotateMessage.style.display = 'none';
             document.body.classList.remove('orientation-locked');
         }
     }
 
-    // Проверяем ориентацию при загрузке
+    // check orient on load
     checkOrientation();
 
-    // Слушаем изменения ориентации
+    // listen orient change
     window.addEventListener('orientationchange', checkOrientation);
 
-    // Слушаем изменения размера окна
+    // listen resize window
     window.addEventListener('resize', checkOrientation);
 
-    // Массив фотографий с низким и высоким качеством
+    // arr photos low & high quality
     const groupPhotos = [
         { low: 'photo1.webp', high: 'group_photo_1_high.webp' },
         { low: 'photo2.webp', high: 'photo2.jpg' },
@@ -94,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentPhoto = groupPhotos[slideIndex];
 
-        // Низкое качество сначала
+        // low quality first
         slideshowImage.src = `/group_photos/${currentPhoto.low}`;
         slideshowBackground.style.backgroundImage = `url('/group_photos/${currentPhoto.low}')`;
 
-        // Предзагрузка высокого качества
+        // preload high quality
         const highResImage = new Image();
         highResImage.src = `/group_photos/${currentPhoto.high}`;
         highResImage.onload = () => {
@@ -136,11 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = !isPlaying;
     });
 
-    // Запускаем слайдшоу
+    // start slideshow
     showSlide(slideIndex);
     startSlideshow();
 
-    // Модальное окно для увеличения
+    // modal for enlarge
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-image');
     const closeBtn = document.querySelector('.modal .close');
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Массив студентов
+    // arr students
     const students = [
         {
             photoLow: '/images/student1.webp',
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const centralCard = document.getElementById('central-card');
     if (!centralCard) {
-        console.error('centralCard не найден');
+        console.error('centralCard not found');
         return;
     }
     const leftCard = document.querySelector('.left-card');
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hint = centralCard.querySelector('.hint');
     if (!hint) {
-        console.error('hint не найден внутри centralCard');
+        console.error('hint not found in centralCard');
         return;
     }
 
@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollContainer.addEventListener('scroll', () => {
         const scrollPosition = scrollContainer.scrollTop;
 
-        // показываем кнопку, если в зоне портретов
+        // show btn if in portrait zone
         if (scrollPosition >= portraitSectionTop - 10 && scrollPosition <= portraitSectionBottom + 10) {
             backToSlideshowBtn.style.display = 'flex';
         } else {
@@ -581,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const slideHint = document.getElementById('slide-hint');
     let hintHidden = localStorage.getItem('hintHidden');
 
-    // Если подсказка не скрывалась ранее, показываем
+    // if hint not hidden before, show
     if (!hintHidden && slideHint) {
         slideHint.style.display = 'flex';
     } else if (slideHint) {
@@ -595,22 +595,21 @@ document.addEventListener('DOMContentLoaded', () => {
         thirdSectionTop = thirdSection.offsetTop;
     });
 
-    // Отслеживаем скролл
+    // track scroll
     scrollContainer.addEventListener('scroll', () => {
         const scrollPosition = scrollContainer.scrollTop;
         const viewportHeight = scrollContainer.clientHeight;
 
-        // Проверяем достижение третьей секции или конца
+        // if user reach 3rd section (portrait)
+        // or end scroll, hide hint forever
         if (!hintHidden && slideHint) {
-            // Если пользователь достиг третьей секции (портретной)
-            // или конца скролла, скрываем подсказку навсегда
             if ((scrollPosition + viewportHeight >= thirdSectionTop) ||
                 (scrollPosition + viewportHeight >= scrollContainer.scrollHeight)) {
                 slideHint.style.display = 'none';
                 localStorage.setItem('hintHidden', 'true');
                 hintHidden = 'true';
             } else {
-                // Иначе, если ещё не достигли третьей секции и подсказка не скрыта
+                // else, if not reach 3rd sect & hint not hidden
                 if (!hintHidden) {
                     slideHint.style.display = 'flex';
                 }
