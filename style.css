@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    overflow-x: hidden; /* Добавлено для предотвращения горизонтального скролла */
+    
     max-width: 100vw;   /* Добавлено для ограничения ширины */
     box-sizing: border-box;
 }
