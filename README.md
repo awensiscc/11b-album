@@ -11,7 +11,7 @@ Live: [11bpics.site](https://11bpics.site/)
 - **Gallery** with autoplay, a progress bar, thumbnails, spring/autumn filters, swipe and keyboard support, and a full-screen photo viewer.
 - **Class cards**: flip a card to read what each student wrote. Browse by swiping, with arrows or from the list of all students.
 - **Works on any device**: phones in portrait or landscape, tablets and desktops.
-- **Fast**: lightweight `.webp` images and small thumbnails. Photos load only when needed, and the slideshow pauses when it's off screen.
+- **Sharp and fast**: every photo is made in several sizes, and each visitor's browser downloads only the size its screen needs. A small blurred preview shows instantly while the sharp version loads. Photos load only when they're about to be seen, and the slideshow pauses when it's off screen.
 - **Accessible**: keyboard navigation, screen reader labels, and reduced animation for visitors who ask for less motion.
 - **No build step**: plain HTML, CSS and JavaScript. Beginner-friendly and commented.
 
@@ -41,23 +41,38 @@ npx serve .
 
 Everything you see on the page (photos, names and phrases) comes from **`data.js`**:
 
-- `GROUP_PHOTOS`: gallery photos, in order. Each photo has a fast `file`, a best-quality `full` version for the enlarged view, and a `season` (`'spring'` or `'autumn'`).
-- `STUDENTS`: one entry per student, with a `photo`, a `name` and a `phrase` for the back of the card. Leave `phrase` empty and the card won't flip.
+- `GROUP_PHOTOS`: gallery photos, in order. Each has a `photo` name and a `season` (`'spring'` or `'autumn'`).
+- `STUDENTS`: one entry per student, with a `photo` name, a `name` and a `phrase` for the back of the card. Leave `phrase` empty and the card won't flip.
 - `HERO_PHOTOS`: the photos that fade behind the title at the top.
 
-To add a gallery photo, put it in `group_photos/`, put a small copy (about 200px tall) with the same name in `group_photos/thumbs/`, and add a line to `GROUP_PHOTOS`.
+### Adding or replacing photos
+
+The site never uses your full-size photos directly: they would be far too slow. Instead, `tools/build_images.py` makes website-sized copies:
+
+1. Put the full-size originals in `originals/gallery/`, `originals/students/` or `originals/teacher/`. The file name is the photo's name in `data.js`, e.g. `originals/gallery/photo1.jpg`.
+2. Run:
+
+   ```bash
+   pip install pillow
+   python3 tools/build_images.py
+   ```
+
+3. Commit the `photos/` folder and `images.js`. The `originals/` folder is never uploaded (it's in `.gitignore`).
+
+The script only processes new or changed originals. It keeps colours accurate and removes camera data (including GPS location) from every photo. It also makes `og-image.jpg`, the picture shown when the link is shared.
 
 ### Project structure
 
-| File / folder          | What it is                                      |
-| ---------------------- | ----------------------------------------------- |
-| `index.html`           | Page structure and texts (teacher's message)    |
-| `data.js`              | Album content: photos, students, phrases        |
-| `script.js`            | Slideshow, cards, full-screen viewer            |
-| `style.css`            | Colors, fonts, layout (colors are at the top)   |
-| `group_photos/`        | Gallery photos (+ `thumbs/` previews)           |
-| `images/`              | Student portraits                               |
-| `og-image.jpg`         | Preview picture shown when the link is shared   |
+| File / folder             | What it is                                            |
+| ------------------------- | ----------------------------------------------------- |
+| `index.html`              | Page structure and texts (teacher's message)          |
+| `data.js`                 | Album content: photos, students, phrases              |
+| `script.js`               | Slideshow, cards, full-screen viewer                  |
+| `style.css`               | Colors, fonts, layout (colors are at the top)         |
+| `photos/`                 | Website-sized photos, made by `tools/build_images.py` |
+| `images.js`               | List of those photos and their sizes (generated)      |
+| `tools/build_images.py`   | Turns full-size originals into `photos/`              |
+| `og-image.jpg`            | Preview picture shown when the link is shared         |
 
 ### Styles
 

@@ -58,37 +58,107 @@ document.addEventListener('DOMContentLoaded', () => {
     const seasonNames = { spring: 'весна', autumn: 'осінь' };
 
     // =========================================================
+    // photos: each one exists in several widths (listed in images.js),
+    // and the browser downloads only the width that fits the screen
+    // =========================================================
+    const photoInfo = (key) => (typeof PHOTO_INFO !== 'undefined' && PHOTO_INFO[key]) || null;
+    const photoUrl = (key, width) => `photos/${key}-${width}.webp`;
+    const srcsetOf = (key) => photoInfo(key).widths.map((w) => `${photoUrl(key, w)} ${w}w`).join(', ');
+    const galleryKey = (photo) => `gallery/${photo.photo}`;
+
+    // smallest version at least `minWidth` px wide (or the biggest there is)
+    function urlAtLeast(key, minWidth) {
+        const widths = photoInfo(key).widths;
+        return photoUrl(key, widths.find((w) => w >= minWidth) || widths[widths.length - 1]);
+    }
+
+    // tiny version shown (blurred) while the sharp one loads
+    const previewOf = (key) => (photoInfo(key).thumb ? `photos/${key}-thumb.webp` : urlAtLeast(key, 0));
+
+    function exists(key) {
+        if (photoInfo(key)) return true;
+        console.warn(`Photo "${key}" not found in images.js - run tools/build_images.py`);
+        return false;
+    }
+
+    // points an <img> at a photo; `sizes` tells the browser how wide it is shown
+    function setPhoto(img, key, sizes) {
+        img.sizes = sizes;
+        img.srcset = srcsetOf(key);
+        img.src = urlAtLeast(key, 640);
+    }
+
+    // fills a preview + full <img> pair: the preview appears almost at once and
+    // the sharp photo fades in over it when loaded. resolves once the preview is up.
+    function loadPair(preview, full, key, sizes) {
+        full.classList.remove('is-loaded');
+        full.removeAttribute('srcset');
+        full.removeAttribute('src');
+        full.onload = () => full.classList.add('is-loaded');
+        setPhoto(full, key, sizes);
+        preview.classList.remove('is-sharp');
+        return new Promise((resolve) => {
+            preview.onload = resolve;
+            preview.onerror = resolve;
+            setTimeout(resolve, 400); // don't hold the slideshow on a slow connection
+            preview.src = previewOf(key);
+        });
+    }
+
+    // only show photos that were actually generated
+    const galleryPhotos = GROUP_PHOTOS.filter((p) => exists(galleryKey(p)));
+    const students = STUDENTS.filter((s) => exists(`students/${s.photo}`));
+    const heroPhotos = HERO_PHOTOS.filter((name) => exists(`gallery/${name}`));
+
+    // =========================================================
     // hero: stats + slowly changing background
     // =========================================================
-    const seasonCount = new Set(GROUP_PHOTOS.map((p) => p.season)).size;
+    const seasonCount = new Set(galleryPhotos.map((p) => p.season)).size;
     $('hero-stats').innerHTML = [
-        `<b>${STUDENTS.length}</b> ${plural(STUDENTS.length, ['випускник', 'випускники', 'випускників'])}`,
-        `<b>${GROUP_PHOTOS.length}</b> фото`,
+        `<b>${students.length}</b> ${plural(students.length, ['випускник', 'випускники', 'випускників'])}`,
+        `<b>${galleryPhotos.length}</b> фото`,
         `<b>${seasonCount}</b> ${plural(seasonCount, ['фотосесія', 'фотосесії', 'фотосесій'])}`,
     ].map((s) => `<li>${s}</li>`).join('');
 
+    // the hero photo covers the screen: on tall screens it is wider than the viewport
+    function heroSizes(key) {
+        const ratio = photoInfo(key).ratio;
+        return `(max-aspect-ratio: ${Math.round(ratio * 1000)}/1000) ${Math.ceil(ratio * 100)}vh, 100vw`;
+    }
+
     const heroBg = $('hero-bg');
-    const heroSlides = HERO_PHOTOS.map((file, i) => {
-        const slide = document.createElement('div');
+    const heroSlides = heroPhotos.map((name, i) => {
+        const slide = document.createElement('img');
         slide.className = 'hero-slide' + (i === 0 ? ' is-visible' : '');
-        if (i === 0) slide.style.backgroundImage = `url("group_photos/${file}")`;
+        slide.alt = '';
+        slide.decoding = 'async';
+        if (i === 0) {
+            slide.fetchPriority = 'high';
+            setPhoto(slide, `gallery/${name}`, heroSizes(`gallery/${name}`));
+        }
         heroBg.appendChild(slide);
         return slide;
     });
 
     let heroIndex = 0;
     let heroTimer = null;
+    function showHeroSlide(index) {
+        if (index === heroIndex) return;
+        heroSlides[heroIndex].classList.remove('is-visible');
+        heroSlides[index].classList.add('is-visible');
+        heroIndex = index;
+    }
     function nextHeroSlide() {
         const next = (heroIndex + 1) % heroSlides.length;
-        const src = `group_photos/${HERO_PHOTOS[next]}`;
-        const img = new Image();
-        img.onload = () => {
-            heroSlides[next].style.backgroundImage = `url("${src}")`;
-            heroSlides[heroIndex].classList.remove('is-visible');
-            heroSlides[next].classList.add('is-visible');
-            heroIndex = next;
-        };
-        img.src = src;
+        const slide = heroSlides[next];
+        if (!slide.getAttribute('srcset')) {
+            // first time: download it, show it once it's ready
+            const key = `gallery/${heroPhotos[next]}`;
+            slide.addEventListener('load', () => showHeroSlide(next), { once: true });
+            setPhoto(slide, key, heroSizes(key));
+        } else if (slide.complete && slide.naturalWidth) {
+            showHeroSlide(next);
+        }
     }
     function setHeroRunning(run) {
         clearInterval(heroTimer);
@@ -132,6 +202,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
+    // teacher photo
+    // =========================================================
+    const teacherImg = $('teacher-img');
+    if (exists(teacherImg.dataset.photo)) {
+        // shown at min(78vw, 300px) on phones, 380px on wider screens, minus the white border
+        setPhoto(teacherImg, teacherImg.dataset.photo, '(max-width: 800px) min(calc(78vw - 24px), 276px), 356px');
+    }
+
+    // =========================================================
     // gallery: slideshow + thumbnails + season filter
     // =========================================================
     const stage = $('stage');
@@ -143,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const thumbs = $('thumbs');
     const chips = [...document.querySelectorAll('#season-filter .chip')];
 
-    let list = GROUP_PHOTOS;      // photos in the current filter
+    let list = galleryPhotos;     // photos in the current filter
     let pos = 0;                  // current photo inside `list`
     let activeLayer = 0;
     let playing = !reduceMotion;  // autoplay unless the visitor prefers less motion
@@ -156,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // counts next to the filter chips
     chips.forEach((chip) => {
         const season = chip.dataset.season;
-        const count = season === 'all' ? GROUP_PHOTOS.length : GROUP_PHOTOS.filter((p) => p.season === season).length;
+        const count = season === 'all' ? galleryPhotos.length : galleryPhotos.filter((p) => p.season === season).length;
         chip.querySelector('span').textContent = count;
         if (!count) chip.hidden = true;
     });
@@ -168,36 +247,47 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.type = 'button';
             btn.className = 'thumb';
             btn.setAttribute('aria-label', `Фото ${i + 1}`);
-            btn.innerHTML = `<img src="group_photos/thumbs/${photo.file}" alt="" loading="lazy" decoding="async">`;
+            btn.innerHTML = `<img src="${previewOf(galleryKey(photo))}" alt="" loading="lazy" decoding="async">`;
             btn.addEventListener('click', () => showSlide(i));
             thumbs.appendChild(btn);
         });
     }
 
-    function preload(src) {
-        const img = new Image();
-        img.src = src;
-        return img;
+    // how wide the photo will appear inside the stage (it is fitted, not cropped)
+    function stageSizes(key) {
+        const box = stage.getBoundingClientRect();
+        return `${Math.ceil(Math.min(box.width, box.height * photoInfo(key).ratio))}px`;
     }
 
+    // downloads a photo ahead of time, in the size the stage will ask for
+    let preloading = [];
+    function preloadSlide(key) {
+        const full = new Image();
+        full.sizes = stageSizes(key);
+        full.srcset = srcsetOf(key);
+        const preview = new Image();
+        preview.src = previewOf(key);
+        preloading = [full, preview]; // keep a reference so the download isn't dropped
+    }
+
+    let started = false; // has the slideshow shown its first photo yet?
+
     function showSlide(index) {
+        started = true;
         pos = (index + list.length) % list.length;
-        const photo = list[pos];
-        const src = `group_photos/${photo.file}`;
+        const key = galleryKey(list[pos]);
         const token = ++loadToken;
 
-        const img = preload(src);
-        const reveal = () => {
+        // fill the hidden layer, then cross-fade to it as soon as its preview is up
+        const next = layers[1 - activeLayer];
+        next.querySelector('.stage-layer-bg').style.backgroundImage = `url("${previewOf(key)}")`;
+        next.querySelector('.photo-full').alt = photoAlt(pos);
+        loadPair(next.querySelector('.photo-preview'), next.querySelector('.photo-full'), key, stageSizes(key)).then(() => {
             if (token !== loadToken) return; // a newer slide was requested meanwhile
-            const next = layers[1 - activeLayer];
-            next.querySelector('img').src = src;
-            next.querySelector('img').alt = photoAlt(pos);
-            next.querySelector('.stage-layer-bg').style.backgroundImage = `url("${src}")`;
             layers[activeLayer].classList.remove('is-visible');
             next.classList.add('is-visible');
             activeLayer = 1 - activeLayer;
-        };
-        (img.decode ? img.decode() : Promise.resolve()).then(reveal, reveal);
+        });
 
         counter.textContent = `${pad(pos + 1)} / ${pad(list.length)}`;
 
@@ -215,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // warm up the next photo so it appears instantly
-        preload(`group_photos/${list[(pos + 1) % list.length].file}`);
+        preloadSlide(galleryKey(list[(pos + 1) % list.length]));
 
         scheduleNext();
     }
@@ -237,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setFilter(season) {
-        list = season === 'all' ? GROUP_PHOTOS : GROUP_PHOTOS.filter((p) => p.season === season);
+        list = season === 'all' ? galleryPhotos : galleryPhotos.filter((p) => p.season === season);
         chips.forEach((chip) => {
             const on = chip.dataset.season === season;
             chip.classList.toggle('is-active', on);
@@ -256,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const stageWasSwiped = onSwipe(stage, (dir) => showSlide(pos + dir));
     layers.forEach((layer) => {
-        layer.querySelector('img').addEventListener('click', () => {
+        layer.addEventListener('click', () => {
             if (!stageWasSwiped()) openLightbox(pos);
         });
     });
@@ -274,23 +364,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     // lightbox (enlarged photo)
     // =========================================================
+    const lightboxFrame = $('lightbox-frame');
+    const lightboxPreview = $('lightbox-preview');
     const lightboxImg = $('lightbox-img');
     const lightboxCounter = $('lightbox-counter');
     let lightboxPos = 0;
-    let lightboxToken = 0;
 
     function showInLightbox(index) {
         lightboxPos = (index + list.length) % list.length;
-        const photo = list[lightboxPos];
-        const token = ++lightboxToken;
+        const key = galleryKey(list[lightboxPos]);
+        const ratio = photoInfo(key).ratio;
 
-        // the gallery version is already cached, the full version replaces it when ready
-        lightboxImg.src = `group_photos/${photo.file}`;
+        // the frame takes the photo's shape, as big as the screen allows
+        lightboxFrame.style.setProperty('--ratio', ratio);
+        const width = Math.min(window.innerWidth * 0.94, (window.innerHeight - 120) * ratio);
         lightboxImg.alt = photoAlt(lightboxPos);
-        const full = preload(`group_photos/${photo.full || photo.file}`);
-        full.onload = () => {
-            if (token === lightboxToken) lightboxImg.src = full.src;
-        };
+        loadPair(lightboxPreview, lightboxImg, key, `${Math.ceil(width)}px`);
+
+        // the photo already sharp in the slideshow makes a better preview than the thumbnail
+        const shown = layers[activeLayer].querySelector('.photo-full');
+        if (lightboxPos === pos && shown.classList.contains('is-loaded') && shown.currentSrc) {
+            lightboxPreview.src = shown.currentSrc;
+            lightboxPreview.classList.add('is-sharp');
+        }
         lightboxCounter.textContent = `${lightboxPos + 1} / ${list.length}`;
     }
 
@@ -349,19 +445,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let current = 0;
     let flipped = false;
 
-    $('class-title').textContent = `${STUDENTS.length} ${plural(STUDENTS.length, ['випускник', 'випускники', 'випускників'])}`;
+    $('class-title').textContent = `${students.length} ${plural(students.length, ['випускник', 'випускники', 'випускників'])}`;
 
     const hasPhrase = (s) => Boolean(s.phrase && s.phrase.trim());
     const firstName = (name) => name.split(' ')[0];
     const deckWasSwiped = onSwipe(deck, (dir) => goTo(current + dir));
 
-    const cards = STUDENTS.map((student, i) => {
+    // card width in css: clamp(210px, 62vw, 300px)
+    const CARD_SIZES = '(max-width: 338px) 210px, (max-width: 483px) 62vw, 300px';
+
+    const cards = students.map((student, i) => {
         const card = document.createElement('div');
         card.className = 'card' + (hasPhrase(student) ? ' can-flip' : '');
         card.innerHTML = `
             <div class="card-inner">
                 <div class="card-face card-front">
-                    <img src="images/${student.photo}" alt="" loading="lazy" decoding="async" draggable="false">
+                    <img alt="" loading="lazy" decoding="async" draggable="false">
                     <p class="card-name"></p>
                     ${hasPhrase(student) ? '<span class="card-flip-badge" aria-hidden="true"><svg><use href="#i-flip"/></svg></span>' : ''}
                 </div>
@@ -369,7 +468,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
         // textContent keeps names/phrases safe from being read as html
         card.querySelector('.card-name').textContent = student.name;
-        card.querySelector('.card-front img').alt = student.name;
+        const photo = card.querySelector('.card-front img');
+        photo.alt = student.name;
+        photo.addEventListener('load', () => photo.classList.add('is-loaded'));
         if (hasPhrase(student)) {
             card.querySelector('.card-phrase').textContent = student.phrase.trim();
             card.querySelector('.card-signed').textContent = `— ${firstName(student.name)}`;
@@ -386,11 +487,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     });
 
-    const rosterButtons = STUDENTS.map((student, i) => {
+    const rosterButtons = students.map((student, i) => {
         const li = document.createElement('li');
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.innerHTML = `<img src="images/${student.photo}" alt="" loading="lazy" decoding="async"><span></span>`;
+        btn.innerHTML = `<img src="${urlAtLeast(`students/${student.photo}`, 120)}" alt="" loading="lazy" decoding="async"><span></span>`;
         btn.querySelector('span').textContent = student.name;
         btn.addEventListener('click', () => {
             goTo(i);
@@ -402,8 +503,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return btn;
     });
 
+    // portraits load only when their card gets close to the middle
+    function loadCardPhoto(i) {
+        const card = cards[i];
+        if (card.dataset.loaded) return;
+        card.dataset.loaded = 'true';
+        const key = `students/${students[i].photo}`;
+        card.querySelector('.card-front').style.backgroundImage = `url("${urlAtLeast(key, 0)}")`;
+        setPhoto(card.querySelector('.card-front img'), key, CARD_SIZES);
+    }
+
     function renderDeck() {
         cards.forEach((card, i) => {
+            if (Math.abs(i - current) <= 3) loadCardPhoto(i);
             const offset = Math.max(-3, Math.min(3, i - current));
             const isCurrent = i === current;
             card.style.setProperty('--offset', offset);
@@ -419,12 +531,12 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.setAttribute('aria-current', i === current ? 'true' : 'false');
         });
         deckPrev.disabled = current === 0;
-        deckNext.disabled = current === STUDENTS.length - 1;
-        deckCounter.textContent = `${pad(current + 1)} / ${pad(STUDENTS.length)} · ${STUDENTS[current].name}`;
+        deckNext.disabled = current === students.length - 1;
+        deckCounter.textContent = `${pad(current + 1)} / ${pad(students.length)} · ${students[current].name}`;
     }
 
     function goTo(index) {
-        const next = Math.max(0, Math.min(STUDENTS.length - 1, index));
+        const next = Math.max(0, Math.min(students.length - 1, index));
         if (next === current) return;
         current = next;
         flipped = false;
@@ -432,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function flip() {
-        if (!hasPhrase(STUDENTS[current])) return;
+        if (!hasPhrase(students[current])) return;
         flipped = !flipped;
         renderDeck();
     }
@@ -444,11 +556,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowLeft') { goTo(current - 1); e.preventDefault(); }
         if (e.key === 'ArrowRight') { goTo(current + 1); e.preventDefault(); }
         if (e.key === 'Home') { goTo(0); e.preventDefault(); }
-        if (e.key === 'End') { goTo(STUDENTS.length - 1); e.preventDefault(); }
+        if (e.key === 'End') { goTo(students.length - 1); e.preventDefault(); }
         if (e.key === 'Enter' || e.key === ' ') { flip(); e.preventDefault(); }
     });
 
     renderDeck();
+    buildThumbs();
+    setPlaying(playing);
 
     // =========================================================
     // things that react to what is on screen
@@ -469,6 +583,14 @@ document.addEventListener('DOMContentLoaded', () => {
         new IntersectionObserver(([entry]) => setHeroRunning(entry.isIntersecting))
             .observe(document.querySelector('.hero'));
 
+        // the first gallery photo downloads only when the gallery gets close
+        const nearObserver = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            nearObserver.disconnect();
+            if (!started) showSlide(0);
+        }, { rootMargin: '100% 0px' });
+        nearObserver.observe(stage);
+
         // run the slideshow only while it's visible (saves data on phones)
         new IntersectionObserver(([entry]) => {
             stageInView = entry.isIntersecting;
@@ -487,9 +609,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-in'));
         stageInView = true;
         setHeroRunning(true);
+        showSlide(0);
     }
-
-    buildThumbs();
-    setPlaying(playing);
-    showSlide(0);
 });

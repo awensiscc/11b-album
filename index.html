@@ -28,7 +28,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- styles -->
-    <link rel="preload" as="image" href="group_photos/photo1.webp">
     <link rel="stylesheet" href="style.css">
 
     <!-- Google tag (gtag.js) -->
@@ -95,7 +94,7 @@
         <section class="section teacher" id="teacher">
             <div class="teacher-inner">
                 <figure class="teacher-photo reveal">
-                    <img src="teacher.jpg" width="400" height="599" loading="lazy" alt="Класна керівниця Ірина Борисівна">
+                    <img id="teacher-img" data-photo="teacher/teacher" width="400" height="600" loading="lazy" alt="Класна керівниця Ірина Борисівна">
                 </figure>
                 <div class="teacher-words reveal">
                     <p class="eyebrow">Слово класної керівниці</p>
@@ -122,14 +121,17 @@
             </div>
 
             <div class="stage reveal" id="stage" tabindex="0" role="region" aria-roledescription="слайдшоу" aria-label="Групові фото. Стрілки вліво/вправо — гортати">
-                <!-- two layers that cross-fade between photos -->
+                <!-- two layers that cross-fade between photos; each shows a small
+                     blurred preview first, then the sharp photo once it has loaded -->
                 <div class="stage-layer is-visible">
                     <div class="stage-layer-bg" aria-hidden="true"></div>
-                    <img alt="" draggable="false">
+                    <img class="photo-preview" alt="" aria-hidden="true" draggable="false">
+                    <img class="photo-full" alt="" draggable="false">
                 </div>
                 <div class="stage-layer">
                     <div class="stage-layer-bg" aria-hidden="true"></div>
-                    <img alt="" draggable="false">
+                    <img class="photo-preview" alt="" aria-hidden="true" draggable="false">
+                    <img class="photo-full" alt="" draggable="false">
                 </div>
 
                 <button class="stage-arrow prev" id="prev-btn" type="button" aria-label="Попереднє фото"><svg><use href="#i-prev"/></svg></button>
@@ -183,7 +185,10 @@
 
     <!-- enlarged photo -->
     <dialog class="lightbox" id="lightbox" aria-label="Перегляд фото">
-        <img class="lightbox-img" id="lightbox-img" alt="">
+        <div class="lightbox-frame" id="lightbox-frame">
+            <img class="photo-preview" id="lightbox-preview" alt="" aria-hidden="true" draggable="false">
+            <img class="photo-full" id="lightbox-img" alt="" draggable="false">
+        </div>
         <p class="lightbox-counter" id="lightbox-counter"></p>
         <button class="icon-btn lightbox-close" id="lightbox-close" type="button" aria-label="Закрити"><svg><use href="#i-close"/></svg></button>
         <button class="stage-arrow prev" id="lightbox-prev" type="button" aria-label="Попереднє фото"><svg><use href="#i-prev"/></svg></button>
@@ -191,6 +196,7 @@
     </dialog>
 
     <!-- scripts: content first, then behaviour -->
+    <script src="images.js"></script>
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
