@@ -1,55 +1,82 @@
-Web Album Creator
+# Web Album Creator
 
-This website was created by me and my friend from scratch, using auxiliary tools such as AI(ChatGPT v.01-preview) and thorough research. You can use this website to create web versions of school albums and more.
-Features
+This website was created by me and my friend from scratch, using auxiliary tools such as AI (ChatGPT o1-preview) and thorough research. You can use this website to create web versions of school albums and more.
 
-    Customizable Web Albums: Easily create and personalize web-based albums for schools or any other events.
-    Well-Commented Code: The code is extensively commented to help you understand what each function does.
-    Beginner-Friendly: Designed so you can understand and modify the code even with zero prior programming knowledge.
+Live: [11bpics.site](https://11bpics.site/)
 
-Getting Started
-Prerequisites
+## Features
 
-    A modern web browser (Chrome, Firefox, Safari, etc.)
-    A text editor (VS Code, Sublime Text, Notepad++, etc.)
+- **Hero cover** with the class name, year and slowly changing group photos.
+- **Teacher's message** styled like a printed photo with a handwritten signature.
+- **Gallery** with autoplay, a progress bar, thumbnails, spring/autumn filters, swipe and keyboard support, and a full-screen photo viewer.
+- **Class cards**: flip a card to read what each student wrote. Browse by swiping, with arrows or from the list of all students.
+- **Works on any device**: phones in portrait or landscape, tablets and desktops.
+- **Fast**: lightweight `.webp` images and small thumbnails. Photos load only when needed, and the slideshow pauses when it's off screen.
+- **Accessible**: keyboard navigation, screen reader labels, and reduced animation for visitors who ask for less motion.
+- **No build step**: plain HTML, CSS and JavaScript. Beginner-friendly and commented.
 
-Installation
+## Getting Started
 
-    Clone the Repository
+### Prerequisites
 
+- A modern web browser (Chrome, Firefox, Safari, etc.)
+- A text editor (VS Code, Sublime Text, Notepad++, etc.)
+
+### Installation
+
+```bash
 git clone https://github.com/awensiscc/11b-album.git
+cd 11b-album
+```
 
-Navigate to the Project Directory
+Open `index.html` in your browser. Double-clicking it works, but a local web server behaves most like the real site:
 
-    cd 11b-album
+```bash
+npx serve .
+```
 
-    Open index.html in Your Browser
+## Usage
 
-    You can simply double-click the index.html file or serve it using a local web server for better performance.
+### Changing the content
 
-Usage
+Everything you see on the page (photos, names and phrases) comes from **`data.js`**:
 
-    Customization
-        Images and Content: Replace the placeholder images and text with your own content in the images and content directories.
-        Styles: Modify the style.css file to change the appearance of the website.
-        Scripts: Update or add new functionality by editing the script.js file.
+- `GROUP_PHOTOS`: gallery photos, in order. Each photo has a fast `file`, a best-quality `full` version for the enlarged view, and a `season` (`'spring'` or `'autumn'`).
+- `STUDENTS`: one entry per student, with a `photo`, a `name` and a `phrase` for the back of the card. Leave `phrase` empty and the card won't flip.
+- `HERO_PHOTOS`: the photos that fade behind the title at the top.
 
-    Understanding the Code
-        The code is filled with comments explaining each section and function.
-        Even if you're new to coding, the comments will guide you through how everything works.
+To add a gallery photo, put it in `group_photos/`, put a small copy (about 200px tall) with the same name in `group_photos/thumbs/`, and add a line to `GROUP_PHOTOS`.
 
-Contributing
+### Project structure
+
+| File / folder          | What it is                                      |
+| ---------------------- | ----------------------------------------------- |
+| `index.html`           | Page structure and texts (teacher's message)    |
+| `data.js`              | Album content: photos, students, phrases        |
+| `script.js`            | Slideshow, cards, full-screen viewer            |
+| `style.css`            | Colors, fonts, layout (colors are at the top)   |
+| `group_photos/`        | Gallery photos (+ `thumbs/` previews)           |
+| `images/`              | Student portraits                               |
+| `og-image.jpg`         | Preview picture shown when the link is shared   |
+
+### Styles
+
+The main colors and fonts are defined once at the top of `style.css` (`--accent`, `--bg`, …). Change them there to restyle the entire site.
+
+## Contributing
 
 Feel free to fork the repository and submit pull requests. Any improvements or suggestions are welcome.
-License
+
+## License
 
 This project is open-source and available under the MIT License.
-Acknowledgments
 
-    @ueberchirho: I want to express my immense gratitude to my friend @ueberchirho, who greatly assisted me in developing this website.
-    ChatGPT: Assisted in generating ideas and solving coding challenges.
-    Community Resources: Various tutorials and documentation that helped in the development process.
+## Acknowledgments
 
-Contact
+- **@ueberchirho**: I want to express my immense gratitude to my friend @ueberchirho, who greatly assisted me in developing this website.
+- **ChatGPT**: Assisted in generating ideas and solving coding challenges.
+- **Community Resources**: Various tutorials and documentation that helped in the development process.
 
-If you have any questions or need further assistance, please open an issue in the repository or contact us directly in telegram ( @cnkoitsa, @ueberchirho).
+## Contact
+
+If you have any questions or need further assistance, please open an issue in the repository or contact us directly on Telegram (@cnkoitsa, @ueberchirho).

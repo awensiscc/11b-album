@@ -1,620 +1,495 @@
+/*
+ * Album behaviour. The content itself (photos, names, phrases)
+ * lives in data.js - you normally don't need to touch this file.
+ */
 document.addEventListener('DOMContentLoaded', () => {
-    // func dlya cheko orient dev
-    function checkOrientation() {
-        const rotateMessage = document.getElementById('rotate-message');
-        const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const SLIDE_MS = 5000;      // gallery autoplay speed
+    const HERO_MS = 6000;       // hero background speed
+    const SWIPE_PX = 40;        // how far a finger must travel to count as a swipe
 
-        if (isPortrait) {
-            // if vert, show msg & block scroll
-            rotateMessage.style.display = 'flex';
-            document.body.classList.add('orientation-locked');
-        } else {
-            // else horiz, hide msg & unblock scroll
-            rotateMessage.style.display = 'none';
-            document.body.classList.remove('orientation-locked');
+    // ---------- small helpers ----------
+    const $ = (id) => document.getElementById(id);
+    const pad = (n) => String(n).padStart(2, '0');
+
+    // ukrainian plural: plural(27, ['випускник', 'випускники', 'випускників'])
+    function plural(n, forms) {
+        const n10 = n % 10;
+        const n100 = n % 100;
+        if (n10 === 1 && n100 !== 11) return forms[0];
+        if (n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
+        return forms[2];
+    }
+
+    // detects a horizontal swipe on `el` and calls onSwipe(-1 | 1).
+    // returns a function telling whether the last pointer gesture was a swipe
+    // (so a click fired right after it can be ignored).
+    function onSwipe(el, handler) {
+        let startX = 0;
+        let startY = 0;
+        let tracking = false;
+        let swiped = false;
+        el.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            tracking = true;
+            swiped = false;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+        el.addEventListener('pointerup', (e) => {
+            if (!tracking) return;
+            tracking = false;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            if (Math.abs(dx) > SWIPE_PX && Math.abs(dx) > Math.abs(dy) * 1.2) {
+                swiped = true;
+                handler(dx < 0 ? 1 : -1);
+            }
+        });
+        el.addEventListener('pointercancel', () => { tracking = false; });
+        return () => swiped;
+    }
+
+    function setIcon(button, icon, label) {
+        button.querySelector('use').setAttribute('href', `#i-${icon}`);
+        button.setAttribute('aria-label', label);
+    }
+
+    const seasonNames = { spring: 'весна', autumn: 'осінь' };
+
+    // =========================================================
+    // hero: stats + slowly changing background
+    // =========================================================
+    const seasonCount = new Set(GROUP_PHOTOS.map((p) => p.season)).size;
+    $('hero-stats').innerHTML = [
+        `<b>${STUDENTS.length}</b> ${plural(STUDENTS.length, ['випускник', 'випускники', 'випускників'])}`,
+        `<b>${GROUP_PHOTOS.length}</b> фото`,
+        `<b>${seasonCount}</b> ${plural(seasonCount, ['фотосесія', 'фотосесії', 'фотосесій'])}`,
+    ].map((s) => `<li>${s}</li>`).join('');
+
+    const heroBg = $('hero-bg');
+    const heroSlides = HERO_PHOTOS.map((file, i) => {
+        const slide = document.createElement('div');
+        slide.className = 'hero-slide' + (i === 0 ? ' is-visible' : '');
+        if (i === 0) slide.style.backgroundImage = `url("group_photos/${file}")`;
+        heroBg.appendChild(slide);
+        return slide;
+    });
+
+    let heroIndex = 0;
+    let heroTimer = null;
+    function nextHeroSlide() {
+        const next = (heroIndex + 1) % heroSlides.length;
+        const src = `group_photos/${HERO_PHOTOS[next]}`;
+        const img = new Image();
+        img.onload = () => {
+            heroSlides[next].style.backgroundImage = `url("${src}")`;
+            heroSlides[heroIndex].classList.remove('is-visible');
+            heroSlides[next].classList.add('is-visible');
+            heroIndex = next;
+        };
+        img.src = src;
+    }
+    function setHeroRunning(run) {
+        clearInterval(heroTimer);
+        if (run && !reduceMotion && heroSlides.length > 1) {
+            heroTimer = setInterval(nextHeroSlide, HERO_MS);
         }
     }
 
-    // check orient on load
-    checkOrientation();
+    // =========================================================
+    // top bar, current section, back-to-top
+    // =========================================================
+    const topbar = $('topbar');
+    const toTop = $('to-top');
+    function onScroll() {
+        const y = window.scrollY;
+        topbar.classList.toggle('is-scrolled', y > 10);
+        toTop.classList.toggle('is-visible', y > window.innerHeight * 0.8);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
-    // listen orient change
-    window.addEventListener('orientationchange', checkOrientation);
+    const navLinks = [...document.querySelectorAll('.nav a')];
 
-    // listen resize window
-    window.addEventListener('resize', checkOrientation);
+    // =========================================================
+    // fullscreen (hidden where the browser can't do it, e.g. iPhone)
+    // =========================================================
+    const fullscreenBtn = $('fullscreen-btn');
+    if (document.fullscreenEnabled) {
+        fullscreenBtn.hidden = false;
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+        });
+        document.addEventListener('fullscreenchange', () => {
+            const on = Boolean(document.fullscreenElement);
+            setIcon(fullscreenBtn, on ? 'compress' : 'expand', on ? 'Вийти з повноекранного режиму' : 'Повноекранний режим');
+        });
+    }
 
-    // arr photos low & high quality
-    const groupPhotos = [
-        { low: 'photo1.webp', high: 'group_photo_1_high.webp' },
-        { low: 'photo2.webp', high: 'photo2.jpg' },
-        { low: 'photo3.webp', high: 'photo3.jpg' },
-        { low: 'photo5.webp', high: 'photo5_high.webp' },
-        { low: 'photo6.webp', high: 'photo6.jpg' },
-        { low: 'photo7.webp', high: 'photo7.jpg' },
-        { low: 'photo8.webp', high: 'photo8_high.webp' },
-        { low: 'photo9.webp', high: 'photo9_high.webp' },
-        { low: 'photo10.webp', high: 'photo10_high.webp' },
-        { low: 'photo11.webp', high: 'photo11_high.webp' },
-        { low: 'photo21.webp', high: 'photo21.jpg' },
-        { low: 'photo22.webp', high: 'photo22.jpg' },
-        { low: 'photo23.webp', high: 'photo23.jpg' },
-        { low: 'photo13.webp', high: 'photo13.jpg' },
-        { low: 'photo16.webp', high: 'photo16.jpg' },
-        { low: 'photo14.webp', high: 'photo14.jpg' },
-        { low: 'photo15.webp', high: 'photo15.jpg' },
-        { low: 'photo17.webp', high: 'photo17.jpg' },
-        { low: 'photo19.webp', high: 'photo19.jpg' },
-        { low: 'photo20.webp', high: 'photo20.jpg' },
-        { low: 'vesna_last.webp', high: 'vesna_last.jpg' },
-        { low: 'osen_horiz_1.webp', high: 'osen_horiz_1.jpg' },
-        { low: 'osen_horiz_2.webp', high: 'osen_horiz_2.jpg' },
-        { low: 'osen_horiz_3.webp', high: 'osen_horiz_3.jpg' },
-        { low: 'osen_horiz_4.webp', high: 'osen_horiz_4.jpg' },
-        { low: 'osen_horiz_5.webp', high: 'osen_horiz_5.jpg' },
-        { low: 'osen_horiz_6.webp', high: 'osen_horiz_6.jpg' },
-        { low: 'osen_horiz_7.webp', high: 'osen_horiz_7.jpg' },
-        { low: 'osen_horiz_8.webp', high: 'osen_horiz_8.jpg' },
-        { low: 'osen_horiz_9.webp', high: 'osen_horiz_9.jpg' },
-        { low: 'osen_horiz_10.webp', high: 'osen_horiz_10.jpg' },
-        { low: 'osen_horiz_11.webp', high: 'osen_horiz_11.jpg' },
-        { low: 'osen_horiz_12.webp', high: 'osen_horiz_12.jpg' },
-        { low: 'osen_horiz_13.webp', high: 'osen_horiz_13.jpg' },
-        { low: 'osen_horiz_14.webp', high: 'osen_horiz_14.jpg' },
-        { low: 'osen_vert_1.webp', high: 'osen_vert_1.jpg' },
-        { low: 'osen_vert_2.webp', high: 'osen_vert_2.jpg' },
-        { low: 'osen_vert_3.webp', high: 'osen_vert_3.jpg' },
-        { low: 'osen_vert_4.webp', high: 'osen_vert_4.jpg' },
-        { low: 'osen_vert5.webp', high: 'osen_vert5.jpg' },
-        { low: 'osen_vert6.webp', high: 'osen_vert6.jpg' },
-        { low: 'osen_vert7.webp', high: 'osen_vert7.jpg' },
-        { low: 'osen_vert_8.webp', high: 'osen_vert_8.jpg' },
-        { low: 'osen_vert_9.webp', high: 'osen_vert_9.jpg' },
-        { low: 'osen_horiz_last.webp', high: 'osen_horiz_last.jpg' },
-    ];
+    // =========================================================
+    // gallery: slideshow + thumbnails + season filter
+    // =========================================================
+    const stage = $('stage');
+    const lightbox = $('lightbox');
+    const layers = [...stage.querySelectorAll('.stage-layer')];
+    const counter = $('stage-counter');
+    const progress = $('stage-progress');
+    const playPauseBtn = $('play-pause-btn');
+    const thumbs = $('thumbs');
+    const chips = [...document.querySelectorAll('#season-filter .chip')];
 
-    let slideIndex = 0;
-    let slideshowInterval;
-    let isPlaying = true;
+    let list = GROUP_PHOTOS;      // photos in the current filter
+    let pos = 0;                  // current photo inside `list`
+    let activeLayer = 0;
+    let playing = !reduceMotion;  // autoplay unless the visitor prefers less motion
+    let stageInView = false;
+    let slideTimer = null;
+    let loadToken = 0;
 
-    const slideshowBackground = document.querySelector('.slideshow-background');
-    const slideshowImage = document.querySelector('.slideshow img');
-    const prevBtn = document.getElementById('prev-btn');
-    const playPauseBtn = document.getElementById('play-pause-btn');
-    const nextBtn = document.getElementById('next-btn');
+    const photoAlt = (i) => `Групове фото ${i + 1} з ${list.length} (${seasonNames[list[i].season] || 'фотосесія'})`;
+
+    // counts next to the filter chips
+    chips.forEach((chip) => {
+        const season = chip.dataset.season;
+        const count = season === 'all' ? GROUP_PHOTOS.length : GROUP_PHOTOS.filter((p) => p.season === season).length;
+        chip.querySelector('span').textContent = count;
+        if (!count) chip.hidden = true;
+    });
+
+    function buildThumbs() {
+        thumbs.innerHTML = '';
+        list.forEach((photo, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'thumb';
+            btn.setAttribute('aria-label', `Фото ${i + 1}`);
+            btn.innerHTML = `<img src="group_photos/thumbs/${photo.file}" alt="" loading="lazy" decoding="async">`;
+            btn.addEventListener('click', () => showSlide(i));
+            thumbs.appendChild(btn);
+        });
+    }
+
+    function preload(src) {
+        const img = new Image();
+        img.src = src;
+        return img;
+    }
 
     function showSlide(index) {
-        if (index >= groupPhotos.length) {
-            slideIndex = 0;
-        } else if (index < 0) {
-            slideIndex = groupPhotos.length - 1;
-        } else {
-            slideIndex = index;
-        }
+        pos = (index + list.length) % list.length;
+        const photo = list[pos];
+        const src = `group_photos/${photo.file}`;
+        const token = ++loadToken;
 
-        const currentPhoto = groupPhotos[slideIndex];
-
-        // low quality first
-        slideshowImage.src = `/group_photos/${currentPhoto.low}`;
-        slideshowBackground.style.backgroundImage = `url('/group_photos/${currentPhoto.low}')`;
-
-        // preload high quality
-        const highResImage = new Image();
-        highResImage.src = `/group_photos/${currentPhoto.high}`;
-        highResImage.onload = () => {
-            slideshowImage.src = `/group_photos/${currentPhoto.high}`;
-            slideshowBackground.style.backgroundImage = `url('/group_photos/${currentPhoto.high}')`;
+        const img = preload(src);
+        const reveal = () => {
+            if (token !== loadToken) return; // a newer slide was requested meanwhile
+            const next = layers[1 - activeLayer];
+            next.querySelector('img').src = src;
+            next.querySelector('img').alt = photoAlt(pos);
+            next.querySelector('.stage-layer-bg').style.backgroundImage = `url("${src}")`;
+            layers[activeLayer].classList.remove('is-visible');
+            next.classList.add('is-visible');
+            activeLayer = 1 - activeLayer;
         };
+        (img.decode ? img.decode() : Promise.resolve()).then(reveal, reveal);
+
+        counter.textContent = `${pad(pos + 1)} / ${pad(list.length)}`;
+
+        // highlight + center the active thumbnail without scrolling the page
+        [...thumbs.children].forEach((t, i) => {
+            t.classList.toggle('is-active', i === pos);
+            t.setAttribute('aria-current', i === pos ? 'true' : 'false');
+        });
+        const active = thumbs.children[pos];
+        if (active) {
+            thumbs.scrollTo({
+                left: active.offsetLeft - thumbs.clientWidth / 2 + active.offsetWidth / 2,
+                behavior: reduceMotion ? 'auto' : 'smooth',
+            });
+        }
+
+        // warm up the next photo so it appears instantly
+        preload(`group_photos/${list[(pos + 1) % list.length].file}`);
+
+        scheduleNext();
     }
 
-    function startSlideshow() {
-        slideshowInterval = setInterval(() => {
-            showSlide(slideIndex + 1);
-        }, 5000);
-        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    function scheduleNext() {
+        clearTimeout(slideTimer);
+        progress.classList.remove('is-running');
+        const run = playing && stageInView && !document.hidden && !lightbox.open;
+        if (!run) return;
+        void progress.offsetWidth; // restart the css progress animation
+        progress.classList.add('is-running');
+        slideTimer = setTimeout(() => showSlide(pos + 1), SLIDE_MS);
     }
 
-    function stopSlideshow() {
-        clearInterval(slideshowInterval);
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    function setPlaying(value) {
+        playing = value;
+        setIcon(playPauseBtn, playing ? 'pause' : 'play', playing ? 'Пауза' : 'Відтворити');
+        scheduleNext();
     }
 
-    prevBtn.addEventListener('click', () => {
-        showSlide(slideIndex - 1);
-    });
-
-    nextBtn.addEventListener('click', () => {
-        showSlide(slideIndex + 1);
-    });
-
-    playPauseBtn.addEventListener('click', () => {
-        if (isPlaying) {
-            stopSlideshow();
-        } else {
-            startSlideshow();
-        }
-        isPlaying = !isPlaying;
-    });
-
-    // start slideshow
-    showSlide(slideIndex);
-    startSlideshow();
-
-    // modal for enlarge
-    const modal = document.getElementById('image-modal');
-    const modalImg = document.getElementById('modal-image');
-    const closeBtn = document.querySelector('.modal .close');
-
-    slideshowImage.addEventListener('click', () => {
-        modal.style.display = 'block';
-        modalImg.src = slideshowImage.src;
-    });
-
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    modal.addEventListener('click', (e) => {
-        if (e.target == modal) {
-            modal.style.display = 'none';
-        }
-    });
-
-    // arr students
-    const students = [
-        {
-            photoLow: '/images/student1.webp',
-            photoHigh: '/images/student1.jpg',
-            name: 'Микита Дорошенко',
-            phrase: '" qer 3301 qeweff the fddsteg biggest ffddsrwr puzzle fdsgfggfg in fds12gew da dfs6weg wrld eww1ew? who is next?🌊 "'
-        },
-        {
-            photoLow: '/images/student2.webp',
-            photoHigh: '/images/student2.jpg',
-            name: 'Микита Тельчаров',
-            phrase: '" ACHT🎩 "'
-        },
-        {
-            photoLow: '/images/student3.webp',
-            photoHigh: '/images/student3.jpg',
-            name: 'Надія Шукалюк',
-            phrase: '" Фан встреча Nadiiii "'
-        },
-        {
-            photoLow: '/images/student4.webp',
-            photoHigh: '/images/student4.webp',
-            name: 'Владислава Пучинська',
-            phrase: '" Пучік-Шукік-Шукалік "'
-        },
-        {
-            photoLow: '/images/student5.webp',
-            photoHigh: '/images/student5.webp',
-            name: 'Андрій Іванов',
-            phrase: '" Все буде добре, для кожного з нас. "'
-        },
-        {
-            photoLow: '/images/student6.webp',
-            photoHigh: '/images/student6.webp',
-            name: 'Дарія Фесенко',
-            phrase: '"Це, не на вас, це на ситуацію!"'
-        },
-        {
-            photoLow: '/images/student7.webp',
-            photoHigh: '/images/student7.webp',
-            name: 'Ігор Косаківський',
-            phrase: '"за 11 років я все ще не зрозумів математику"'
-        },
-        {
-            photoLow: '/images/student8.webp',
-            photoHigh: '/images/student8.webp',
-            name: 'Богдан Діденко',
-            phrase: '"нанана"'
-        },
-        {
-            photoLow: '/images/student9.webp',
-            photoHigh: '/images/student9.jpg',
-            name: 'Денис Сторожук',
-            phrase: '"Життя надто важливе, щоб сприймати його серйозно."'
-        },
-        {
-            photoLow: '/images/student10.webp',
-            photoHigh: '/images/student10.jpg',
-            name: 'Оксана Браткевич',
-            phrase: '"oksana снайпеrrr"'
-        },
-        {
-            photoLow: '/images/student11.webp',
-            photoHigh: '/images/student11.jpg',
-            name: 'Катерина Кравченко',
-            phrase: '"Санечка снимает"'
-        },
-        {
-            photoLow: '/images/student12.webp',
-            photoHigh: '/images/student12.jpg',
-            name: 'Евеліна Станкова',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student13.webp',
-            photoHigh: '/images/student13.jpg',
-            name: 'Максим Кюркчіу',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student14.webp',
-            photoHigh: '/images/student14.jpg',
-            name: 'Владислав Шкуріна',
-            phrase: '"witch and snake my bfs"'
-        },
-        {
-            photoLow: '/images/student15.webp',
-            photoHigh: '/images/student15.jpg',
-            name: 'Марія Мироненко',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student16.webp',
-            photoHigh: '/images/student16.jpg',
-            name: 'Вероніка Лутенко',
-            phrase: '"\n12:53\nveronika ne vor\nВідкласти\nСтоп\n"'
-        },
-        {
-            photoLow: '/images/student17.webp',
-            photoHigh: '/images/student17.jpg',
-            name: 'Анастасія Гафенко',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student18.webp',
-            photoHigh: '/images/student18.jpg',
-            name: 'Анастасія Мороз',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student19.webp',
-            photoHigh: '/images/student19.jpg',
-            name: 'Марія Бандурова',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student20.webp',
-            photoHigh: '/images/student20.jpg',
-            name: 'Марго Бондар',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student22.webp',
-            photoHigh: '/images/student22.jpg',
-            name: 'Ваеліря Бец',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student23.webp',
-            photoHigh: '/images/student23.jpg',
-            name: 'Соломонова Софія',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student24.webp',
-            photoHigh: '/images/student24.jpg',
-            name: 'Вікторія Василенко',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student25.webp',
-            photoHigh: '/images/student25.jpg',
-            name: 'Артем Богданов',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student26.webp',
-            photoHigh: '/images/student26.jpg',
-            name: 'Надія Цуркан',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student27.webp',
-            photoHigh: '/images/student27.jpg',
-            name: 'Костянтин Краснян',
-            phrase: ''
-        },
-        {
-            photoLow: '/images/student28.webp',
-            photoHigh: '/images/student28.jpg',
-            name: 'Кіра Лафазан',
-            phrase: ''
-        }
-    ];
-
-    let currentIndex = 0;
-
-    const centralCard = document.getElementById('central-card');
-    if (!centralCard) {
-        console.error('centralCard not found');
-        return;
-    }
-    const leftCard = document.querySelector('.left-card');
-    const rightCard = document.querySelector('.right-card');
-
-    const hint = centralCard.querySelector('.hint');
-    if (!hint) {
-        console.error('hint not found in centralCard');
-        return;
+    function setFilter(season) {
+        list = season === 'all' ? GROUP_PHOTOS : GROUP_PHOTOS.filter((p) => p.season === season);
+        chips.forEach((chip) => {
+            const on = chip.dataset.season === season;
+            chip.classList.toggle('is-active', on);
+            chip.setAttribute('aria-pressed', String(on));
+        });
+        buildThumbs();
+        showSlide(0);
     }
 
-    let hintShown = localStorage.getItem('cardHintShown');
+    stage.style.setProperty('--slide-ms', `${SLIDE_MS}ms`);
+    chips.forEach((chip) => chip.addEventListener('click', () => setFilter(chip.dataset.season)));
+    $('prev-btn').addEventListener('click', () => showSlide(pos - 1));
+    $('next-btn').addEventListener('click', () => showSlide(pos + 1));
+    playPauseBtn.addEventListener('click', () => setPlaying(!playing));
+    $('zoom-btn').addEventListener('click', () => openLightbox(pos));
 
-    if (hintShown) {
-        hint.style.display = 'none';
-    } else {
-        hint.style.display = 'flex';
-    }
-
-    function flipCard() {
-        if (students[currentIndex].phrase && students[currentIndex].phrase.trim() !== '') {
-            centralCard.classList.toggle('flip');
-            if (hint && hint.style.display !== 'none') {
-                hint.style.display = 'none';
-                localStorage.setItem('cardHintShown', 'true');
-            }
-        }
-    }
-
-    centralCard.addEventListener('click', flipCard);
-    if (hint) {
-        hint.addEventListener('click', flipCard);
-    }
-
-    function updateDisplay(direction = null) {
-        if (!centralCard || !leftCard || !rightCard) {
-            return;
-        }
-
-        if (direction === 'left') {
-            centralCard.classList.add('blur-out-right');
-        } else if (direction === 'right') {
-            centralCard.classList.add('blur-out-left');
-        }
-
-        const updateContent = () => {
-            const frontImg = centralCard.querySelector('.front .photo img');
-            const nameDiv = centralCard.querySelector('.overlay .name');
-            const phraseDiv = centralCard.querySelector('.back .phrase');
-
-            frontImg.src = `${students[currentIndex].photoLow}`;
-            const highResImage = new Image();
-            highResImage.src = `${students[currentIndex].photoHigh}`;
-            highResImage.onload = () => {
-                frontImg.src = `${students[currentIndex].photoHigh}`;
-            };
-
-            nameDiv.textContent = students[currentIndex].name;
-            phraseDiv.textContent = students[currentIndex].phrase || '';
-
-            if (centralCard.classList.contains('flip')) {
-                centralCard.classList.remove('flip');
-            }
-
-            centralCard.classList.remove('blur-out-left', 'blur-out-right');
-            if (direction === 'left') {
-                centralCard.classList.add('blur-in-left');
-            } else if (direction === 'right') {
-                centralCard.classList.add('blur-in-right');
-            }
-
-            if (students[currentIndex].phrase && students[currentIndex].phrase.trim() !== '') {
-                let hintShown = localStorage.getItem('cardHintShown');
-                if (!hintShown) {
-                    hint.style.display = 'flex';
-                } else {
-                    hint.style.display = 'none';
-                }
-                centralCard.style.cursor = 'pointer';
-            } else {
-                hint.style.display = 'none';
-                centralCard.style.cursor = 'default';
-            }
-
-            if (currentIndex > 0) {
-                leftCard.style.display = 'block';
-                const leftImg = leftCard.querySelector('img');
-                leftImg.src = `${students[currentIndex - 1].photoLow}`;
-
-                const leftHighResImage = new Image();
-                leftHighResImage.src = `${students[currentIndex - 1].photoHigh}`;
-                leftHighResImage.onload = () => {
-                    leftImg.src = `${students[currentIndex - 1].photoHigh}`;
-                };
-            } else {
-                leftCard.style.display = 'none';
-            }
-
-            if (currentIndex < students.length - 1) {
-                rightCard.style.display = 'block';
-                const rightImg = rightCard.querySelector('img');
-                rightImg.src = `${students[currentIndex + 1].photoLow}`;
-
-                const rightHighResImage = new Image();
-                rightHighResImage.src = `${students[currentIndex + 1].photoHigh}`;
-                rightHighResImage.onload = () => {
-                    rightImg.src = `${students[currentIndex + 1].photoHigh}`;
-                };
-            } else {
-                rightCard.style.display = 'none';
-            }
-
-            if (direction) {
-                setTimeout(() => {
-                    centralCard.classList.remove('blur-in-left', 'blur-in-right');
-                }, 500);
-            }
-        };
-
-        if (direction) {
-            setTimeout(updateContent, 500);
-        } else {
-            updateContent();
-        }
-    }
-
-    leftCard.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateDisplay('left');
-        }
-    });
-
-    rightCard.addEventListener('click', () => {
-        if (currentIndex < students.length - 1) {
-            currentIndex++;
-            updateDisplay('right');
-        }
-    });
-
-    updateDisplay();
-
-    const backToSlideshowBtn = document.getElementById('back-to-slideshow-btn');
-    const scrollContainer = document.querySelector('.scroll-container');
-    const sections = document.querySelectorAll('.section');
-    const slideshowSection = sections[1];
-    const portraitSection = sections[2];
-
-    let portraitSectionTop = portraitSection.offsetTop;
-    let portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
-
-    window.addEventListener('load', () => {
-        portraitSectionTop = portraitSection.offsetTop;
-        portraitSectionBottom = portraitSection.offsetTop + portraitSection.offsetHeight;
-    });
-
-    scrollContainer.addEventListener('scroll', () => {
-        const scrollPosition = scrollContainer.scrollTop;
-
-        // show btn if in portrait zone
-        if (scrollPosition >= portraitSectionTop - 10 && scrollPosition <= portraitSectionBottom + 10) {
-            backToSlideshowBtn.style.display = 'flex';
-        } else {
-            backToSlideshowBtn.style.display = 'none';
-        }
-    });
-
-    backToSlideshowBtn.addEventListener('click', () => {
-        scrollContainer.scrollTo({
-            top: slideshowSection.offsetTop,
-            behavior: 'smooth'
+    const stageWasSwiped = onSwipe(stage, (dir) => showSlide(pos + dir));
+    layers.forEach((layer) => {
+        layer.querySelector('img').addEventListener('click', () => {
+            if (!stageWasSwiped()) openLightbox(pos);
         });
     });
 
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    const fullscreenPopup = document.getElementById('fullscreen-popup');
-    const closePopup = document.querySelector('.close-popup');
-    const enterFullscreenBtn = document.getElementById('enter-fullscreen');
-    const confirmHidePopupBtn = document.getElementById('confirm-hide-popup');
-    const cancelHidePopupBtn = document.getElementById('cancel-hide-popup');
-    const popupContent = document.querySelector('.popup-content');
-    const popupConfirmationContent = document.querySelector('.popup-confirmation-content');
+    stage.addEventListener('keydown', (e) => {
+        if (e.target !== stage) return;
+        if (e.key === 'ArrowLeft') { showSlide(pos - 1); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { showSlide(pos + 1); e.preventDefault(); }
+        if (e.key === ' ') { setPlaying(!playing); e.preventDefault(); }
+        if (e.key === 'Enter') { openLightbox(pos); e.preventDefault(); }
+    });
 
-    function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                alert(`Ошибка при переходе в полноэкранный режим: ${err.message} (${err.name})`);
-            });
+    document.addEventListener('visibilitychange', scheduleNext);
+
+    // =========================================================
+    // lightbox (enlarged photo)
+    // =========================================================
+    const lightboxImg = $('lightbox-img');
+    const lightboxCounter = $('lightbox-counter');
+    let lightboxPos = 0;
+    let lightboxToken = 0;
+
+    function showInLightbox(index) {
+        lightboxPos = (index + list.length) % list.length;
+        const photo = list[lightboxPos];
+        const token = ++lightboxToken;
+
+        // the gallery version is already cached, the full version replaces it when ready
+        lightboxImg.src = `group_photos/${photo.file}`;
+        lightboxImg.alt = photoAlt(lightboxPos);
+        const full = preload(`group_photos/${photo.full || photo.file}`);
+        full.onload = () => {
+            if (token === lightboxToken) lightboxImg.src = full.src;
+        };
+        lightboxCounter.textContent = `${lightboxPos + 1} / ${list.length}`;
+    }
+
+    function openLightbox(index) {
+        showInLightbox(index);
+        if (typeof lightbox.showModal === 'function') {
+            lightbox.showModal();
         } else {
-            document.exitFullscreen();
+            lightbox.setAttribute('open', '');
         }
+        scheduleNext();
     }
 
-    enterFullscreenBtn.addEventListener('click', () => {
-        toggleFullscreen();
-        hideFullscreenPopup();
-    });
-
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-
-    document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+    function closeLightbox() {
+        if (typeof lightbox.close === 'function') {
+            lightbox.close();
         } else {
-            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-        }
-    });
-
-    function showFullscreenPopup() {
-        fullscreenPopup.classList.add('active');
-    }
-
-    function hideFullscreenPopup() {
-        fullscreenPopup.classList.remove('active');
-    }
-
-    function isIOS() {
-        const ua = window.navigator.userAgent;
-        const iOS = /iPad|iPhone|iPod/.test(ua);
-        const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-        return iOS || isSafari;
-    }
-
-    if (isIOS()) {
-        fullscreenBtn.style.display = 'none';
-        fullscreenPopup.style.display = 'none';
-    } else {
-        if (!localStorage.getItem('hideFullscreenPopup')) {
-            setTimeout(showFullscreenPopup, 3000);
+            lightbox.removeAttribute('open');
+            onLightboxClosed();
         }
     }
 
-    closePopup.addEventListener('click', () => {
-        popupContent.style.display = 'none';
-        popupConfirmationContent.style.display = 'flex';
-    });
-
-    confirmHidePopupBtn.addEventListener('click', () => {
-        localStorage.setItem('hideFullscreenPopup', 'true');
-        hideFullscreenPopup();
-    });
-
-    cancelHidePopupBtn.addEventListener('click', () => {
-        popupConfirmationContent.style.display = 'none';
-        hideFullscreenPopup();
-    });
-
-    const slideHint = document.getElementById('slide-hint');
-    let hintHidden = localStorage.getItem('hintHidden');
-
-    // if hint not hidden before, show
-    if (!hintHidden && slideHint) {
-        slideHint.style.display = 'flex';
-    } else if (slideHint) {
-        slideHint.style.display = 'none';
+    function onLightboxClosed() {
+        // continue the slideshow from the photo the visitor ended on
+        if (lightboxPos !== pos) {
+            showSlide(lightboxPos);
+        } else {
+            scheduleNext();
+        }
+        stage.focus({ preventScroll: true });
     }
 
-    const thirdSection = sections[2];
-    let thirdSectionTop = thirdSection.offsetTop;
-
-    window.addEventListener('load', () => {
-        thirdSectionTop = thirdSection.offsetTop;
+    lightbox.addEventListener('close', onLightboxClosed);
+    $('lightbox-close').addEventListener('click', closeLightbox);
+    $('lightbox-prev').addEventListener('click', () => showInLightbox(lightboxPos - 1));
+    $('lightbox-next').addEventListener('click', () => showInLightbox(lightboxPos + 1));
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
     });
+    lightbox.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') showInLightbox(lightboxPos - 1);
+        if (e.key === 'ArrowRight') showInLightbox(lightboxPos + 1);
+    });
+    onSwipe(lightbox, (dir) => showInLightbox(lightboxPos + dir));
 
-    // track scroll
-    scrollContainer.addEventListener('scroll', () => {
-        const scrollPosition = scrollContainer.scrollTop;
-        const viewportHeight = scrollContainer.clientHeight;
+    // =========================================================
+    // classmates: card deck + roster
+    // =========================================================
+    const deck = $('deck');
+    const track = $('deck-track');
+    const deckPrev = $('deck-prev');
+    const deckNext = $('deck-next');
+    const deckCounter = $('deck-counter');
+    const roster = $('roster');
 
-        // if user reach 3rd section (portrait)
-        // or end scroll, hide hint forever
-        if (!hintHidden && slideHint) {
-            if ((scrollPosition + viewportHeight >= thirdSectionTop) ||
-                (scrollPosition + viewportHeight >= scrollContainer.scrollHeight)) {
-                slideHint.style.display = 'none';
-                localStorage.setItem('hintHidden', 'true');
-                hintHidden = 'true';
+    let current = 0;
+    let flipped = false;
+
+    $('class-title').textContent = `${STUDENTS.length} ${plural(STUDENTS.length, ['випускник', 'випускники', 'випускників'])}`;
+
+    const hasPhrase = (s) => Boolean(s.phrase && s.phrase.trim());
+    const firstName = (name) => name.split(' ')[0];
+    const deckWasSwiped = onSwipe(deck, (dir) => goTo(current + dir));
+
+    const cards = STUDENTS.map((student, i) => {
+        const card = document.createElement('div');
+        card.className = 'card' + (hasPhrase(student) ? ' can-flip' : '');
+        card.innerHTML = `
+            <div class="card-inner">
+                <div class="card-face card-front">
+                    <img src="images/${student.photo}" alt="" loading="lazy" decoding="async" draggable="false">
+                    <p class="card-name"></p>
+                    ${hasPhrase(student) ? '<span class="card-flip-badge" aria-hidden="true"><svg><use href="#i-flip"/></svg></span>' : ''}
+                </div>
+                ${hasPhrase(student) ? '<div class="card-face card-back"><p class="card-phrase"></p><p class="card-signed"></p></div>' : ''}
+            </div>`;
+        // textContent keeps names/phrases safe from being read as html
+        card.querySelector('.card-name').textContent = student.name;
+        card.querySelector('.card-front img').alt = student.name;
+        if (hasPhrase(student)) {
+            card.querySelector('.card-phrase').textContent = student.phrase.trim();
+            card.querySelector('.card-signed').textContent = `— ${firstName(student.name)}`;
+        }
+        card.addEventListener('click', () => {
+            if (deckWasSwiped()) return;
+            if (i === current) {
+                flip();
             } else {
-                // else, if not reach 3rd sect & hint not hidden
-                if (!hintHidden) {
-                    slideHint.style.display = 'flex';
-                }
+                goTo(i);
             }
-        }
+        });
+        track.appendChild(card);
+        return card;
     });
 
+    const rosterButtons = STUDENTS.map((student, i) => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.innerHTML = `<img src="images/${student.photo}" alt="" loading="lazy" decoding="async"><span></span>`;
+        btn.querySelector('span').textContent = student.name;
+        btn.addEventListener('click', () => {
+            goTo(i);
+            deck.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+            deck.focus({ preventScroll: true });
+        });
+        li.appendChild(btn);
+        roster.appendChild(li);
+        return btn;
+    });
+
+    function renderDeck() {
+        cards.forEach((card, i) => {
+            const offset = Math.max(-3, Math.min(3, i - current));
+            const isCurrent = i === current;
+            card.style.setProperty('--offset', offset);
+            card.style.setProperty('--abs', Math.abs(offset));
+            card.classList.toggle('is-far', Math.abs(i - current) > 2);
+            card.classList.toggle('is-current', isCurrent);
+            card.classList.toggle('is-flipped', isCurrent && flipped);
+            // only the card in the middle is exposed to screen readers
+            card.setAttribute('aria-hidden', String(!isCurrent));
+        });
+        rosterButtons.forEach((btn, i) => {
+            btn.classList.toggle('is-active', i === current);
+            btn.setAttribute('aria-current', i === current ? 'true' : 'false');
+        });
+        deckPrev.disabled = current === 0;
+        deckNext.disabled = current === STUDENTS.length - 1;
+        deckCounter.textContent = `${pad(current + 1)} / ${pad(STUDENTS.length)} · ${STUDENTS[current].name}`;
+    }
+
+    function goTo(index) {
+        const next = Math.max(0, Math.min(STUDENTS.length - 1, index));
+        if (next === current) return;
+        current = next;
+        flipped = false;
+        renderDeck();
+    }
+
+    function flip() {
+        if (!hasPhrase(STUDENTS[current])) return;
+        flipped = !flipped;
+        renderDeck();
+    }
+
+    deckPrev.addEventListener('click', () => goTo(current - 1));
+    deckNext.addEventListener('click', () => goTo(current + 1));
+    deck.addEventListener('keydown', (e) => {
+        if (e.target !== deck) return;
+        if (e.key === 'ArrowLeft') { goTo(current - 1); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { goTo(current + 1); e.preventDefault(); }
+        if (e.key === 'Home') { goTo(0); e.preventDefault(); }
+        if (e.key === 'End') { goTo(STUDENTS.length - 1); e.preventDefault(); }
+        if (e.key === 'Enter' || e.key === ' ') { flip(); e.preventDefault(); }
+    });
+
+    renderDeck();
+
+    // =========================================================
+    // things that react to what is on screen
+    // =========================================================
+    if ('IntersectionObserver' in window) {
+        // fade sections in as they appear
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+        // run the hero only while it's visible
+        new IntersectionObserver(([entry]) => setHeroRunning(entry.isIntersecting))
+            .observe(document.querySelector('.hero'));
+
+        // run the slideshow only while it's visible (saves data on phones)
+        new IntersectionObserver(([entry]) => {
+            stageInView = entry.isIntersecting;
+            scheduleNext();
+        }, { threshold: 0.35 }).observe(stage);
+
+        // highlight the nav link of the section on screen
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                navLinks.forEach((a) => a.classList.toggle('is-current', a.hash === `#${entry.target.id}`));
+            });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        document.querySelectorAll('main > section').forEach((s) => sectionObserver.observe(s));
+    } else {
+        document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-in'));
+        stageInView = true;
+        setHeroRunning(true);
+    }
+
+    buildThumbs();
+    setPlaying(playing);
+    showSlide(0);
 });
